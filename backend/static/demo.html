@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SunsetBot Widget Demo</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #f0f2f5;
+            min-height: 100vh;
+        }
+        .demo-store {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        .demo-banner {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: white;
+            padding: 32px;
+            border-radius: 16px;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+        .demo-banner h1 {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+        .demo-banner p {
+            color: #ccc;
+            font-size: 14px;
+        }
+        .demo-products {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 16px;
+            margin-top: 24px;
+        }
+        .demo-product {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        .demo-product-img {
+            height: 180px;
+            background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+        }
+        .demo-product-info {
+            padding: 16px;
+        }
+        .demo-product-info h3 {
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+        .demo-product-info .price {
+            color: #FF6B35;
+            font-weight: 700;
+            font-size: 16px;
+        }
+        .demo-note {
+            text-align: center;
+            color: #666;
+            font-size: 13px;
+            margin-top: 32px;
+            padding: 16px;
+            background: white;
+            border-radius: 8px;
+        }
+        .demo-note strong { color: #FF6B35; }
+    </style>
+</head>
+<body>
+    <div class="demo-store">
+        <div class="demo-banner">
+            <h1>SunsetBot Demo Store</h1>
+            <p>This is a fake store page to demonstrate the SunsetBot chat widget.</p>
+            <p>Click the orange chat bubble in the bottom-right corner to try it!</p>
+        </div>
+
+        <h2 style="margin-bottom: 16px; color: #1a1a2e;">Featured Products</h2>
+        <div class="demo-products">
+            <div class="demo-product">
+                <div class="demo-product-img">👢</div>
+                <div class="demo-product-info">
+                    <h3>Classic Chelsea Boot</h3>
+                    <div class="price">$129.99</div>
+                </div>
+            </div>
+            <div class="demo-product">
+                <div class="demo-product-img">👟</div>
+                <div class="demo-product-info">
+                    <h3>Trail Running Shoe</h3>
+                    <div class="price">$94.99</div>
+                </div>
+            </div>
+            <div class="demo-product">
+                <div class="demo-product-img">👗</div>
+                <div class="demo-product-info">
+                    <h3>Floral Wrap Dress</h3>
+                    <div class="price">$59.99</div>
+                </div>
+            </div>
+            <div class="demo-product">
+                <div class="demo-product-img">🧥</div>
+                <div class="demo-product-info">
+                    <h3>Puffer Jacket</h3>
+                    <div class="price">$179.00</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="demo-note">
+            <p>
+                <strong>How store owners install SunsetBot:</strong> Just paste a single
+                <code>&lt;script&gt;</code> tag into their Shopify theme.
+            </p>
+        </div>
+    </div>
+
+    <!--
+        THIS IS ALL A STORE OWNER NEEDS TO ADD:
+        One script tag with their shop domain and server URL.
+    -->
+    <script>
+        // Auto-detect server URL so the demo works via ngrok/Railway too
+        (function() {
+            var script = document.createElement('script');
+            script.src = '/static/sunsetbot-widget.iife.js';
+            script.setAttribute('data-shop', 'demo-store.myshopify.com');
+            script.setAttribute('data-server', window.location.origin);
+            script.setAttribute('data-color', '#FF6B35');
+            document.body.appendChild(script);
+        })();
+    </script>
+</body>
+</html>
