@@ -1,6 +1,6 @@
 """
 ================================================================================
-SunsetBot — Shopify Product Sync Service
+Jerry The Customer Service Bot — Shopify Product Sync Service
 ================================================================================
 File:     app/services/shopify_sync.py
 Version:  1.0.0
@@ -8,7 +8,7 @@ Session:  5 (February 2026)
 
 PURPOSE
 -------
-Syncs product catalog from a Shopify store into SunsetBot's search index.
+Syncs product catalog from a Shopify store into Jerry The Customer Service Bot's search index.
 
 - Full sync: Fetches all products via Shopify REST API (paginated)
 - Webhook sync: Processes individual product create/update/delete events
@@ -42,7 +42,7 @@ logger = logging.getLogger("sunsetbot.shopify_sync")
 
 class ShopifySyncService:
     """
-    Fetches and syncs products from Shopify into SunsetBot's vector index.
+    Fetches and syncs products from Shopify into Jerry The Customer Service Bot's vector index.
     """
 
     def __init__(self):

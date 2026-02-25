@@ -1,8 +1,8 @@
-# CLAUDE.md — SunsetBot Project Instructions
+# CLAUDE.md — Jerry The Customer Service Bot Project Instructions
 
 ## What This Project Is
 
-SunsetBot is an AI-powered customer service chatbot for Shopify stores. Store owners install it via Shopify OAuth, their product catalog syncs automatically, and customers get an intelligent shopping assistant via an embeddable chat widget.
+Jerry The Customer Service Bot is an AI-powered customer service chatbot for Shopify stores. Store owners install it via Shopify OAuth, their product catalog syncs automatically, and customers get an intelligent shopping assistant via an embeddable chat widget.
 
 **Target market:** Shopify store owners. Planned pricing: $199/mo.
 **Current status:** Deployed to Railway. Live at `https://sunsetbot-production.up.railway.app`. 12 test products synced, chat working with real Shopify data.
@@ -168,7 +168,7 @@ GET  /static/demo.html                  Widget demo page
 ## Critical Patterns — DO NOT BREAK
 
 ### Branding
-- Code uses **"SunsetBot"** everywhere. The folder was briefly called "VoixA" in Session 3 — ignore that.
+- Code uses **"Jerry The Customer Service Bot"** everywhere. The folder was briefly called "VoixA" in Session 3 — ignore that.
 
 ### API Keys & Secrets
 - `.env` has real Groq, Pinecone, and Shopify API keys. NEVER commit, log, or expose them.
@@ -250,7 +250,7 @@ GET  /static/demo.html                  Widget demo page
 
 - **Partner account:** Linked (created Feb 22, 2026)
 - **Dev store domain:** `sunsetbot.myshopify.com`
-- **App name:** SunsetBot
+- **App name:** Jerry The Customer Service Bot
 - **App Client ID:** `b323444b85e59301f81c74e556dd7efe` (also in .env as SHOPIFY_API_KEY)
 - **Distribution:** Custom distribution (install link generated via Partner dashboard)
 - **App installed on dev store:** YES (Feb 22, 2026)

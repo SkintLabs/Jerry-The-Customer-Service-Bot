@@ -8,7 +8,7 @@ export default defineConfig({
     // Output a single self-contained JS file
     lib: {
       entry: 'src/main.tsx',
-      name: 'SunsetBot',
+      name: 'JerryBot',
       fileName: 'sunsetbot-widget',
       formats: ['iife'], // Immediately Invoked Function Expression — works in any browser
     },

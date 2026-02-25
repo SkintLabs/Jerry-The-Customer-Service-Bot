@@ -1,5 +1,5 @@
 # AI Architecture Document
-## SunsetBot - E-commerce AI Assistant
+## Jerry The Customer Service Bot - E-commerce AI Assistant
 
 **Version:** 1.0  
 **Date:** February 14, 2026  

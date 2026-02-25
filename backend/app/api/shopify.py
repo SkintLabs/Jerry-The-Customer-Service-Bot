@@ -1,6 +1,6 @@
 """
 ================================================================================
-SunsetBot — Shopify API Routes
+Jerry The Customer Service Bot — Shopify API Routes
 ================================================================================
 File:     app/api/shopify.py
 Version:  1.0.0
@@ -216,7 +216,7 @@ async def shopify_callback(request: Request):
     <!DOCTYPE html>
     <html>
     <head>
-        <title>SunsetBot — Installed!</title>
+        <title>Jerry The Customer Service Bot — Installed!</title>
         <style>
             body {{
                 font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
@@ -239,7 +239,7 @@ async def shopify_callback(request: Request):
     </head>
     <body>
         <div class="card">
-            <h1>SunsetBot Installed!</h1>
+            <h1>Jerry The Customer Service Bot Installed!</h1>
             <p>
                 Your store <span class="store-name">{store_domain}</span> is now connected.
             </p>
@@ -341,6 +341,8 @@ async def shopify_webhooks(request: Request):
         await _handle_product_upsert(shop_domain, payload)
     elif topic == "products/delete":
         await _handle_product_delete(shop_domain, payload)
+    elif topic == "refunds/create":
+        await _handle_refund_created(shop_domain, payload)
     else:
         logger.info(f"Unhandled webhook topic: {topic}")
 
@@ -480,3 +482,25 @@ async def _handle_product_delete(shop_domain: str, payload: dict) -> None:
         logger.warning("shopify_sync not available — ignoring product webhook")
     except Exception as e:
         logger.error(f"Product delete webhook failed: {e}", exc_info=True)
+
+
+async def _handle_refund_created(shop_domain: str, payload: dict) -> None:
+    """
+    Handle refunds/create webhook — parse the refund and log a confirmation.
+
+    Uses OrderService.parse_refund_webhook() to extract order ID, transaction
+    status/amount/currency, and refunded product titles from the payload.
+
+    Future enhancement: push real-time notification to the customer's
+    active WebSocket session if they're still connected.
+    """
+    try:
+        from app.services.order_service import OrderService
+        update_message = OrderService.parse_refund_webhook(payload)
+        order_id = payload.get("order_id", "unknown")
+        logger.info(
+            f"Refund webhook processed | shop={shop_domain} | "
+            f"order_id={order_id} | message={update_message}"
+        )
+    except Exception as e:
+        logger.error(f"Refund webhook handler failed: {e}", exc_info=True)

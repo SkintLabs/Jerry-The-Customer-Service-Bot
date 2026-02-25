@@ -1,4 +1,4 @@
-# SESSION 4 HANDOFF — SunsetBot AI Customer Service Bot
+# SESSION 4 HANDOFF — Jerry The Customer Service Bot AI Customer Service Bot
 
 **Date:** February 21, 2026
 **Session:** 4 of N
@@ -9,7 +9,7 @@
 
 ## WHAT THIS PROJECT IS
 
-SunsetBot is an AI-powered customer service chatbot for Shopify stores. It uses:
+Jerry The Customer Service Bot is an AI-powered customer service chatbot for Shopify stores. It uses:
 - **Backend:** Python FastAPI with WebSocket real-time chat
 - **AI:** Groq API (Llama 3.1 70B) for natural language responses
 - **Search:** Sentence-transformers + Pinecone for semantic product search (mock mode for dev)

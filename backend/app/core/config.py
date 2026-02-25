@@ -1,6 +1,6 @@
 """
 ================================================================================
-SunsetBot — Application Settings
+Jerry The Customer Service Bot — Application Settings
 ================================================================================
 File:     app/core/config.py
 Version:  1.0.0
@@ -56,7 +56,7 @@ class Settings(BaseSettings):
     shopify_api_key: str = Field(default="", alias="SHOPIFY_API_KEY")
     shopify_api_secret: str = Field(default="", alias="SHOPIFY_API_SECRET")
     shopify_scopes: str = Field(
-        default="read_products,write_products,read_orders,read_customers",
+        default="read_products,write_products,read_orders,write_orders,read_customers,write_customers",
         alias="SHOPIFY_SCOPES",
     )
     shopify_api_version: str = Field(default="2024-10", alias="SHOPIFY_API_VERSION")

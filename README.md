@@ -1,4 +1,4 @@
-# 🌅 SunsetBot - AI E-commerce Assistant
+# 🌅 Jerry The Customer Service Bot - AI E-commerce Assistant
 
 **AI-powered conversational commerce platform for Shopify stores**
 
@@ -459,7 +459,7 @@ Now go build it! 🚀
 
 ---
 
-**Project:** SunsetBot v1.0  
+**Project:** Jerry The Customer Service Bot v1.0  
 **Created:** February 14, 2026  
 **Status:** Ready for Development  
 **Next Review:** When MVP is complete

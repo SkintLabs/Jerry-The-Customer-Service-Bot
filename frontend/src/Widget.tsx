@@ -1,7 +1,7 @@
 /**
- * SunsetBot Chat Widget
+ * Jerry The Customer Service Bot Chat Widget
  *
- * A self-contained chat interface that connects to the SunsetBot WebSocket API.
+ * A self-contained chat interface that connects to the Jerry The Customer Service Bot WebSocket API.
  * Renders inside a shadow DOM for CSS isolation from the host page.
  *
  * Features:
@@ -160,7 +160,7 @@ export function Widget({ shop, server, primaryColor, position }: WidgetProps) {
             addMessage('assistant', data.text, data.products)
           }
         } catch {
-          console.error('SunsetBot: Failed to parse message')
+          console.error('Jerry The Customer Service Bot: Failed to parse message')
         }
       }
 

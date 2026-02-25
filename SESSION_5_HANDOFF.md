@@ -1,4 +1,4 @@
-# SunsetBot — Session 5 Handoff Document
+# Jerry The Customer Service Bot — Session 5 Handoff Document
 
 **Date:** February 22, 2026
 **Version:** Code v3.0.0 (main.py) / v1.2.0 (services) / v1.0.0 (Shopify + DB + Auth)
@@ -68,7 +68,7 @@ Two critical bugs in Shopify HMAC verification:
 
 - **Shopify Partner account** created and linked
 - **Dev store:** `sunsetbot.myshopify.com`
-- **App:** SunsetBot (Client ID: `b323444b85e59301f81c74e556dd7efe`)
+- **App:** Jerry The Customer Service Bot (Client ID: `b323444b85e59301f81c74e556dd7efe`)
 - **Custom Distribution** configured (not App Store) — install links generated in Partner dashboard
 - **Legacy install flow** enabled
 - **ngrok** (v3.36.1) installed for HTTPS tunneling
@@ -232,7 +232,7 @@ GET  /static/demo.html                 Widget demo page
 
 - **Partner account:** Linked (created Feb 22, 2026)
 - **Dev store domain:** `sunsetbot.myshopify.com`
-- **App name:** SunsetBot
+- **App name:** Jerry The Customer Service Bot
 - **App Client ID:** `b323444b85e59301f81c74e556dd7efe`
 - **App Client Secret:** In `.env` as `SHOPIFY_API_SECRET`
 - **Distribution:** Custom distribution (install link from Partner dashboard)

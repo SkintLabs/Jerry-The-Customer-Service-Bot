@@ -1,5 +1,5 @@
 # ============================================================
-# SunsetBot Backend — Dockerfile
+# Jerry The Customer Service Bot Backend — Dockerfile
 # ============================================================
 # Uses PyTorch CPU-only to keep image under Railway's 4 GB limit.
 # Full CUDA PyTorch is ~2.5 GB; CPU-only is ~200 MB.

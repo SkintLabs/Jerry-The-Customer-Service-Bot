@@ -1,6 +1,6 @@
 """
 ================================================================================
-SunsetBot — Security Utilities
+Jerry The Customer Service Bot — Security Utilities
 ================================================================================
 File:     app/core/security.py
 Version:  1.0.0

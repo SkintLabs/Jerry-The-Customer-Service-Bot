@@ -1,5 +1,5 @@
 # ============================================================
-# SunsetBot Backend — Python Dependencies
+# Jerry The Customer Service Bot Backend — Python Dependencies
 # ============================================================
 # Install: pip install -r requirements.txt
 # ============================================================

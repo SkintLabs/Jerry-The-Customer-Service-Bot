@@ -1,5 +1,5 @@
 /**
- * SunsetBot Widget — Entry Point
+ * Jerry The Customer Service Bot Widget — Entry Point
  *
  * This file creates a shadow DOM container and mounts the React chat widget.
  * Store owners embed this with:

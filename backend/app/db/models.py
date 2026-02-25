@@ -1,6 +1,6 @@
 """
 ================================================================================
-SunsetBot — Database Models
+Jerry The Customer Service Bot — Database Models
 ================================================================================
 File:     app/db/models.py
 Version:  1.0.0
@@ -8,7 +8,7 @@ Session:  5 (February 2026)
 
 PURPOSE
 -------
-SQLAlchemy ORM models for SunsetBot's persistent data layer.
+SQLAlchemy ORM models for Jerry The Customer Service Bot's persistent data layer.
 Currently stores Shopify store info and OAuth tokens.
 Uses async SQLAlchemy with SQLite (dev) or PostgreSQL (production).
 ================================================================================
@@ -45,7 +45,7 @@ class Base(DeclarativeBase):
 
 class Store(Base):
     """
-    Represents a Shopify store that has installed SunsetBot.
+    Represents a Shopify store that has installed Jerry The Customer Service Bot.
 
     Created during OAuth callback, updated on product sync and billing events.
     The access_token is the Shopify Admin API token — treat it like a password.
@@ -84,10 +84,10 @@ class Store(Base):
         comment="Shopify plan (basic, shopify, advanced, plus)",
     )
 
-    # --- SunsetBot config ---
+    # --- Jerry The Customer Service Bot config ---
     sunsetbot_plan: Mapped[str] = mapped_column(
         String(32), default="trial",
-        comment="SunsetBot billing plan: trial | starter | pro",
+        comment="Jerry The Customer Service Bot billing plan: trial | starter | pro",
     )
     widget_color: Mapped[str] = mapped_column(
         String(7), default="#FF6B35",

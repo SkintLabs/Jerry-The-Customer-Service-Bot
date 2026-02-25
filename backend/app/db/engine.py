@@ -1,6 +1,6 @@
 """
 ================================================================================
-SunsetBot — Database Engine
+Jerry The Customer Service Bot — Database Engine
 ================================================================================
 File:     app/db/engine.py
 Version:  1.0.0

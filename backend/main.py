@@ -1,6 +1,6 @@
 """
 ================================================================================
-SunsetBot — FastAPI Application Entry Point
+Jerry The Customer Service Bot — FastAPI Application Entry Point
 ================================================================================
 File:     backend/main.py
 Version:  3.0.0  (Session 5 — Shopify integration, JWT auth, DB layer)
@@ -137,9 +137,9 @@ async def lifespan(app: FastAPI):
     # Wire real PI into engine
     if conversation_engine and product_intelligence:
         conversation_engine._product_intelligence = product_intelligence
-        logger.info("Services initialized — SunsetBot is ready.")
+        logger.info("Services initialized — Jerry The Customer Service Bot is ready.")
     else:
-        logger.warning("SunsetBot started in DEGRADED mode — some services unavailable.")
+        logger.warning("Jerry The Customer Service Bot started in DEGRADED mode — some services unavailable.")
 
     # Log Shopify integration status
     if settings.shopify_configured:
@@ -174,7 +174,7 @@ async def lifespan(app: FastAPI):
 # FastAPI App
 # ---------------------------------------------------------------------------
 app = FastAPI(
-    title="SunsetBot API",
+    title="Jerry The Customer Service Bot API",
     description=(
         "AI-powered e-commerce assistant backend for Shopify stores. "
         "Real-time chat via WebSocket, product search via vector embeddings, "
@@ -419,7 +419,7 @@ async def health_check():
 @app.get("/", tags=["System"])
 async def root():
     return {
-        "message": "SunsetBot API is running!",
+        "message": "Jerry The Customer Service Bot API is running!",
         "version": "3.0.0",
         "docs": "/docs",
         "health": "/health",
@@ -573,7 +573,7 @@ async def global_exception_handler(request, exc):
 # ============================================================================
 
 if __name__ == "__main__":
-    logger.info(f"Starting SunsetBot API | environment={settings.environment} | port={settings.port}")
+    logger.info(f"Starting Jerry The Customer Service Bot API | environment={settings.environment} | port={settings.port}")
 
     uvicorn.run(
         "main:app",

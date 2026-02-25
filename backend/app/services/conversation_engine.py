@@ -1,6 +1,6 @@
 """
 ================================================================================
-SunsetBot — ConversationEngine Service
+Jerry The Customer Service Bot — ConversationEngine Service
 ================================================================================
 File:     app/services/conversation_engine.py
 Version:  1.2.0
@@ -116,7 +116,7 @@ class CartItem:
 class StoreConfig:
     """Store-specific configuration. In production, loaded from the database."""
     store_id: str
-    name: str = "SunsetBot Demo Store"
+    name: str = "Jerry The Customer Service Bot Demo Store"
     description: str = "A premium e-commerce store"
     shipping_policy: str = "Free shipping on orders over $50. Standard delivery 3-5 business days."
     return_policy: str = "30-day hassle-free returns. Items must be unworn with original tags."
@@ -375,6 +375,8 @@ class EntityExtractor:
         "material": r"\b(leather|cotton|wool|silk|polyester|denim|suede|linen|velvet|satin|bamboo|cashmere|nylon)\b",
         "attribute": r"\b(waterproof|wireless|bluetooth|organic|sustainable|handmade|vintage|oversized|slim|fitted|packable|quick-dry)\b",
         "occasion": r"\b(beach|summer|winter|spring|autumn|fall|party|evening|casual|office|gym|yoga|hiking|outdoor|travel|wedding|formal)\b",
+        "order_number": r"#?\b(\d{4,})\b",
+        "email": r"\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}\b",
     }
 
     PRODUCT_CATEGORIES = [
@@ -465,6 +467,16 @@ class EntityExtractor:
         occasions = re.findall(self.PATTERNS["occasion"], msg_lower)
         if occasions:
             entities["occasions"] = list(set(occasions))
+
+        # --- Order Number ---
+        order_match = re.search(self.PATTERNS["order_number"], msg_lower)
+        if order_match:
+            entities["order_number"] = order_match.group(1)
+
+        # --- Email ---
+        email_match = re.search(self.PATTERNS["email"], message)  # case-sensitive for email
+        if email_match:
+            entities["email"] = email_match.group(0)
 
         # --- Product Category ---
         for cat in self.PRODUCT_CATEGORIES:
@@ -643,9 +655,10 @@ class ResponseGenerator:
         intent: str,
         entities: dict,
         products: list[Product],
+        extra_context: Optional[str] = None,
     ) -> str:
         system_prompt = self._build_system_prompt(context, intent)
-        user_prompt = self._build_user_prompt(message, entities, products, context)
+        user_prompt = self._build_user_prompt(message, entities, products, context, extra_context)
 
         history_messages = [
             msg.to_groq_format()
@@ -746,6 +759,7 @@ SECURITY:
         entities: dict,
         products: list,
         context: ConversationContext,
+        extra_context: Optional[str] = None,
     ) -> str:
         parts = [f"<customer_message>{message}</customer_message>"]
 
@@ -774,6 +788,9 @@ SECURITY:
                 line = f"{i}. {p.to_display_string()}"
                 parts.append(line)
             parts.append("")
+
+        if extra_context:
+            parts.append(f"\n[Order/Support Context:]\n{extra_context}\n")
 
         parts.append("Respond naturally and helpfully:")
 
@@ -846,7 +863,7 @@ class _InMemoryContextManager:
 
 class ConversationEngine:
     """
-    The central AI orchestrator for SunsetBot.
+    The central AI orchestrator for Jerry The Customer Service Bot.
 
     Usage:
         engine = ConversationEngine()
@@ -867,7 +884,18 @@ class ConversationEngine:
         self._product_intelligence = _MockProductIntelligence()
         self._context_manager = _InMemoryContextManager()
 
+        # Order service — initialized lazily (imported to avoid circular deps)
+        self._order_service = None
+
         logger.info("ConversationEngine ready")
+
+    @property
+    def order_service(self):
+        """Lazy-load OrderService to avoid circular imports."""
+        if self._order_service is None:
+            from app.services.order_service import OrderService
+            self._order_service = OrderService()
+        return self._order_service
 
     async def process_message(
         self,
@@ -897,8 +925,10 @@ class ConversationEngine:
         # Step 2: Entity Extraction
         entities = self.entity_extractor.extract(message)
 
-        # Step 3: Product Search
+        # Step 3: Product Search / Order Lookup / Return Handling
         products = []
+        order_context = None  # Extra context string for the LLM
+
         if intent in ("product_search", "sizing"):
             products = await self._product_intelligence.search(
                 query=message,
@@ -911,6 +941,12 @@ class ConversationEngine:
             if len(context.viewed_products) < MAX_VIEWED_PRODUCTS:
                 context.viewed_products.extend(new_ids[:MAX_VIEWED_PRODUCTS - len(context.viewed_products)])
 
+        elif intent == "order_tracking":
+            order_context = await self._handle_order_tracking(message, context)
+
+        elif intent == "support":
+            order_context = await self._handle_support(message, entities, context)
+
         # Step 4: Generate Response via Groq / Llama 3.1
         response_text = await self.response_generator.generate(
             message=message,
@@ -918,6 +954,7 @@ class ConversationEngine:
             intent=intent,
             entities=entities,
             products=products,
+            extra_context=order_context,
         )
 
         # Step 5: Escalation Check
@@ -993,6 +1030,117 @@ class ConversationEngine:
         }
         return messages.get(priority, messages["medium"])
 
+    # ─────────────────────────── Order / Support Handlers ───────────────────────────
+
+    def _get_shop_domain(self, store_id: str) -> str:
+        """
+        Convert store_id (Pinecone namespace) back to Shopify domain.
+
+        store_id_for_pinecone strips '.myshopify.com', so we add it back.
+        """
+        if store_id.endswith(".myshopify.com"):
+            return store_id
+        return f"{store_id}.myshopify.com"
+
+    async def _handle_order_tracking(
+        self, message: str, context: ConversationContext
+    ) -> Optional[str]:
+        """
+        Handle 'order_tracking' intent — WISMO (Where Is My Order?).
+
+        Extracts the order number, looks it up via Shopify GraphQL,
+        and returns a formatted tracking context string for the LLM.
+        """
+        entities = self.entity_extractor.extract(message)
+        order_number = entities.get("order_number")
+
+        if not order_number:
+            return (
+                "The customer is asking about an order but didn't provide an order number. "
+                "Ask them for their order number (e.g., #1001)."
+            )
+
+        order_name = f"#{order_number}"
+        shop_domain = self._get_shop_domain(context.store_id)
+
+        try:
+            tracking = await self.order_service.get_tracking_info(shop_domain, order_name)
+        except Exception as e:
+            logger.error(f"Order tracking lookup failed: {e}", exc_info=True)
+            return (
+                f"There was a problem looking up order {order_name}. "
+                "Apologize and suggest the customer contact support directly."
+            )
+
+        if not tracking:
+            return (
+                f"No order found matching {order_name}. "
+                "Ask the customer to double-check their order number."
+            )
+
+        return tracking
+
+    async def _handle_support(
+        self, message: str, entities: dict, context: ConversationContext
+    ) -> Optional[str]:
+        """
+        Handle 'support' intent — returns, refunds, complaints.
+
+        Detects sub-intent (return/refund/general), looks up the order if
+        a number is provided, and returns context for the LLM to compose
+        an appropriate response.
+        """
+        msg_lower = message.lower()
+        order_number = entities.get("order_number")
+
+        is_return = any(w in msg_lower for w in ["return", "send back", "exchange"])
+        is_refund = any(w in msg_lower for w in ["refund", "money back", "reimburse"])
+
+        # No order number — ask for it if it's a return/refund request
+        if not order_number:
+            if is_return or is_refund:
+                return (
+                    "The customer wants a return/refund but didn't provide an order number. "
+                    "Ask for their order number so you can look it up."
+                )
+            return None  # General support — let LLM handle with its default context
+
+        order_name = f"#{order_number}"
+        shop_domain = self._get_shop_domain(context.store_id)
+
+        try:
+            order_info = await self.order_service.lookup_order(shop_domain, order_name)
+        except Exception as e:
+            logger.error(f"Order lookup failed for support: {e}", exc_info=True)
+            return (
+                f"There was a problem looking up order {order_name}. "
+                "Apologize and suggest the customer contact support directly."
+            )
+
+        if not order_info:
+            return (
+                f"No order found matching {order_name}. "
+                "Ask the customer to verify their order number."
+            )
+
+        order_summary = self.order_service._format_tracking(order_info)
+
+        if is_return:
+            return (
+                f"The customer wants to return an item from {order_name}. "
+                f"Here is the order info:\n{order_summary}\n\n"
+                "Ask which specific item they'd like to return and confirm the reason."
+            )
+        elif is_refund:
+            return (
+                f"The customer is requesting a refund for {order_name}. "
+                f"Here is the order info:\n{order_summary}\n\n"
+                "Confirm the details and let them know you'll process this. "
+                "A team member may need to finalize."
+            )
+        else:
+            return f"Customer support request regarding {order_name}:\n{order_summary}"
+
 
 # ============================================================================
 # MOCK PRODUCT INTELLIGENCE (fallback when real PI not wired)
@@ -1036,7 +1184,7 @@ if __name__ == "__main__":
 
     async def smoke_test():
         print("\n" + "="*60)
-        print("  SunsetBot ConversationEngine — Smoke Test")
+        print("  Jerry The Customer Service Bot ConversationEngine — Smoke Test")
         print("="*60 + "\n")
 
         engine = ConversationEngine()

@@ -4,7 +4,7 @@
 **Version:** 1.0  
 **Date:** February 14, 2026  
 **Status:** Active Development  
-**Project Codename:** SunsetBot
+**Project Codename:** Jerry The Customer Service Bot
 
 ---
 
@@ -33,7 +33,7 @@ An AI-powered conversational commerce assistant that integrates seamlessly with 
 ## Product Overview
 
 ### What It Does
-SunsetBot is an AI assistant that embeds in Shopify stores to:
+Jerry The Customer Service Bot is an AI assistant that embeds in Shopify stores to:
 
 1. **Understand Products Deeply**
    - Ingests entire product catalog (titles, descriptions, variants, prices, inventory)
@@ -578,7 +578,7 @@ Plus, use code COMEBACK10 for 10% off.
 
 [Chat with me now] → Opens chat widget with cart pre-loaded
 
-- SunsetBot 🌅
+- Jerry The Customer Service Bot 🌅
 ```
 
 **Technical Implementation:**
@@ -666,7 +666,7 @@ async def send_cart_recovery_email(checkout_id, email, items):
 **Dashboard Layout (React):**
 ```
 ┌─────────────────────────────────────────────────┐
-│  SunsetBot Analytics - Last 30 Days             │
+│  Jerry The Customer Service Bot Analytics - Last 30 Days             │
 ├─────────────────────────────────────────────────┤
 │  📊 Overview                                    │
 │  ├─ 1,247 Conversations (+23% vs last month)   │

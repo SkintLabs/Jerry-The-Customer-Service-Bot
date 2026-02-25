@@ -1,4 +1,4 @@
-# SunsetBot — Session 4 Handoff Document
+# Jerry The Customer Service Bot — Session 4 Handoff Document
 
 **Date:** February 21, 2026
 **Version:** Code v2.2.0 (main.py) / v1.2.0 (services)
@@ -8,7 +8,7 @@
 
 ## What This Project Is
 
-SunsetBot is an AI-powered customer service chatbot for Shopify stores. Store owners install it, it syncs their product catalog, and their customers get an AI shopping assistant that can:
+Jerry The Customer Service Bot is an AI-powered customer service chatbot for Shopify stores. Store owners install it, it syncs their product catalog, and their customers get an AI shopping assistant that can:
 
 - Search products semantically ("something for the beach under $50")
 - Answer sizing, shipping, return policy questions from store config
@@ -25,7 +25,7 @@ SunsetBot is an AI-powered customer service chatbot for Shopify stores. Store ow
 ### Session 1 (Feb 14)
 - Created product requirements document (70+ pages)
 - Defined AI architecture, tech stack decisions
-- Set up project guidelines and branding (Golden Hour / SunsetBot)
+- Set up project guidelines and branding (Golden Hour / Jerry The Customer Service Bot)
 
 ### Session 2 (Feb ~15)
 - Built `conversation_engine.py` — full AI pipeline:
@@ -222,7 +222,7 @@ Then open `test_chat.html` in a browser. You can:
 The `.env` file contains real Groq and Pinecone API keys. These work but should be rotated before any public deployment.
 
 ### Branding
-The project was originally called "SunsetBot" (Sessions 1-2), briefly "VoixA" (Session 3 folder name), and the code internally uses "SunsetBot" everywhere. Stick with **SunsetBot** in code. The final customer-facing brand name can be decided later — it's just a string in StoreConfig.
+The project was originally called "Jerry The Customer Service Bot" (Sessions 1-2), briefly "VoixA" (Session 3 folder name), and the code internally uses "Jerry The Customer Service Bot" everywhere. Stick with **Jerry The Customer Service Bot** in code. The final customer-facing brand name can be decided later — it's just a string in StoreConfig.
 
 ### Mock vs Production Mode
 ProductIntelligence auto-detects:

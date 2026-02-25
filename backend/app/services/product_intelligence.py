@@ -1,6 +1,6 @@
 """
 ================================================================================
-SunsetBot — ProductIntelligence Service
+Jerry The Customer Service Bot — ProductIntelligence Service
 ================================================================================
 File:     app/services/product_intelligence.py
 Version:  1.2.0
@@ -128,7 +128,7 @@ class CatalogProduct:
 
 class ProductIntelligence:
     """
-    Semantic product search layer for SunsetBot.
+    Semantic product search layer for Jerry The Customer Service Bot.
 
     Public API:
         await pi.search(query, store_id, filters, top_k)
@@ -793,7 +793,7 @@ class ProductIntelligence:
 async def seed_demo_products():
     """Index the 20 demo products into Pinecone. Run once after creating the index."""
     print("\n" + "="*60)
-    print("  SunsetBot — Seeding Demo Products into Pinecone")
+    print("  Jerry The Customer Service Bot — Seeding Demo Products into Pinecone")
     print("="*60 + "\n")
 
     pi = ProductIntelligence()
