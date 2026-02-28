@@ -70,7 +70,8 @@ export function Widget({ shop, server, primaryColor, position }: WidgetProps) {
   // Voice chat state
   const [isRecording, setIsRecording] = useState(false)
   const [ttsEnabled, setTtsEnabled] = useState(false)
-  const [speechSupported, setSpeechSupported] = useState(false)
+  const [sttSupported, setSttSupported] = useState(false)
+  const [ttsSupported, setTtsSupported] = useState(false)
 
   const wsRef = useRef<WebSocket | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
@@ -80,6 +81,7 @@ export function Widget({ shop, server, primaryColor, position }: WidgetProps) {
   const maxReconnectAttempts = 5
   const recognitionRef = useRef<any>(null)
   const synthRef = useRef<SpeechSynthesis | null>(null)
+  const ttsEnabledRef = useRef(false)
 
   // Auto-scroll to bottom on new messages
   useEffect(() => {
@@ -93,12 +95,13 @@ export function Widget({ shop, server, primaryColor, position }: WidgetProps) {
     }
   }, [isOpen])
 
-  // Detect speech API support on mount
+  // Detect speech API support on mount (check STT and TTS independently)
   useEffect(() => {
     const SpeechRecognition = (window as any).SpeechRecognition
       || (window as any).webkitSpeechRecognition
     const synthAvailable = 'speechSynthesis' in window
-    setSpeechSupported(!!SpeechRecognition && synthAvailable)
+    setSttSupported(!!SpeechRecognition)
+    setTtsSupported(synthAvailable)
     if (synthAvailable) {
       synthRef.current = window.speechSynthesis
     }
@@ -259,14 +262,14 @@ export function Widget({ shop, server, primaryColor, position }: WidgetProps) {
   // ─────────────── Voice Chat ───────────────
 
   const speakText = useCallback((text: string) => {
-    if (!ttsEnabled || !synthRef.current) return
+    if (!ttsEnabledRef.current || !synthRef.current) return
     synthRef.current.cancel()
     const utterance = new SpeechSynthesisUtterance(text)
     utterance.lang = 'en-US'
     utterance.rate = 1.0
     utterance.pitch = 1.0
     synthRef.current.speak(utterance)
-  }, [ttsEnabled])
+  }, [])
 
   const toggleRecording = useCallback(() => {
     if (isRecording) {
@@ -335,13 +338,15 @@ export function Widget({ shop, server, primaryColor, position }: WidgetProps) {
               <span className="sb-header-title">Shopping Assistant</span>
             </div>
             <div className="sb-header-actions">
-              {speechSupported && (
+              {ttsSupported && (
                 <button
                   className={`sb-tts-btn ${ttsEnabled ? 'sb-tts-active' : ''}`}
                   onClick={() => {
                     setTtsEnabled(prev => {
-                      if (prev) synthRef.current?.cancel()
-                      return !prev
+                      const next = !prev
+                      ttsEnabledRef.current = next
+                      if (!next) synthRef.current?.cancel()
+                      return next
                     })
                   }}
                   aria-label={ttsEnabled ? 'Disable voice responses' : 'Enable voice responses'}
@@ -449,7 +454,7 @@ export function Widget({ shop, server, primaryColor, position }: WidgetProps) {
               disabled={!isConnected}
               maxLength={2000}
             />
-            {speechSupported && (
+            {sttSupported && (
               <button
                 className={`sb-mic-btn ${isRecording ? 'sb-mic-active' : ''}`}
                 onClick={toggleRecording}
@@ -845,16 +850,16 @@ function getStyles(primaryColor: string): string {
       cursor: not-allowed;
     }
     .sb-mic-active {
-      background: #fef2f2;
-      border-color: #fca5a5;
-      color: #dc2626;
+      background: #f0fdf4;
+      border-color: #86efac;
+      color: #16a34a;
       animation: sb-pulse 1.5s ease-in-out infinite;
     }
     .sb-rec-dot {
       width: 12px;
       height: 12px;
       border-radius: 50%;
-      background: #dc2626;
+      background: #16a34a;
       animation: sb-pulse 1.5s ease-in-out infinite;
     }
     @keyframes sb-pulse {
