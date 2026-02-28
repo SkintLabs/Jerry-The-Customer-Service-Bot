@@ -264,7 +264,10 @@ export function Widget({ shop, server, primaryColor, position }: WidgetProps) {
   const speakText = useCallback((text: string) => {
     if (!ttsEnabledRef.current || !synthRef.current) return
     synthRef.current.cancel()
-    const utterance = new SpeechSynthesisUtterance(text)
+    // Strip emojis so they aren't read aloud
+    const clean = text.replace(/[\p{Emoji_Presentation}\p{Extended_Pictographic}]/gu, '').replace(/\s{2,}/g, ' ').trim()
+    if (!clean) return
+    const utterance = new SpeechSynthesisUtterance(clean)
     utterance.lang = 'en-US'
     utterance.rate = 1.0
     utterance.pitch = 1.0
