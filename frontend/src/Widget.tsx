@@ -82,6 +82,7 @@ export function Widget({ shop, server, primaryColor, position }: WidgetProps) {
   const recognitionRef = useRef<any>(null)
   const synthRef = useRef<SpeechSynthesis | null>(null)
   const ttsEnabledRef = useRef(false)
+  const preferredVoiceRef = useRef<SpeechSynthesisVoice | null>(null)
 
   // Auto-scroll to bottom on new messages
   useEffect(() => {
@@ -104,6 +105,31 @@ export function Widget({ shop, server, primaryColor, position }: WidgetProps) {
     setTtsSupported(synthAvailable)
     if (synthAvailable) {
       synthRef.current = window.speechSynthesis
+
+      // Pick the best English voice from a ranked preference list
+      const pickVoice = () => {
+        const voices = window.speechSynthesis.getVoices()
+        const preferred = [
+          'Google UK English Female',
+          'Google US English',
+          'Samantha',
+          'Karen',
+          'Daniel',
+          'Moira',
+          'Rishi',
+        ]
+        for (const name of preferred) {
+          const match = voices.find(v => v.name === name)
+          if (match) { preferredVoiceRef.current = match; return }
+        }
+        // Fallback: first English voice available
+        const english = voices.find(v => v.lang.startsWith('en'))
+        if (english) preferredVoiceRef.current = english
+      }
+
+      pickVoice()
+      // Chrome loads voices async — listen for the event
+      window.speechSynthesis.addEventListener('voiceschanged', pickVoice)
     }
   }, [])
 
@@ -268,6 +294,7 @@ export function Widget({ shop, server, primaryColor, position }: WidgetProps) {
     const clean = text.replace(/[\p{Emoji_Presentation}\p{Extended_Pictographic}]/gu, '').replace(/\s{2,}/g, ' ').trim()
     if (!clean) return
     const utterance = new SpeechSynthesisUtterance(clean)
+    if (preferredVoiceRef.current) utterance.voice = preferredVoiceRef.current
     utterance.lang = 'en-US'
     utterance.rate = 1.0
     utterance.pitch = 1.0
