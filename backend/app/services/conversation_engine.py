@@ -525,6 +525,31 @@ class EscalationHandler:
         "wonderful", "awesome", "happy", "pleased", "thank", "thanks",
     ]
 
+    PROFANITY_WORDS = [
+        "fuck", "fucking", "fucked", "fucker", "motherfucker", "fuk",
+        "shit", "shitty", "shitting",
+        "damn", "damned", "dammit",
+        "ass", "asshole",
+        "hell",
+        "bastard",
+        "bitch", "bitching",
+        "crap", "crappy",
+        "piss", "pissed",
+        "dick", "dickhead",
+        "bullshit",
+        "cunt",
+        "cocksucker",
+        "pussy",
+        "faggot", "fag",
+        "wanker",
+        "retard",
+        "idiot", "stupid",
+        "wtf", "stfu",
+        "goddamn", "goddammit",
+        "freaking", "frickin",
+        "dead", "satan",
+    ]
+
     def check(
         self,
         message: str,
@@ -588,6 +613,11 @@ class EscalationHandler:
                 details="AI response indicates uncertainty.",
             ))
 
+        # Trigger 7: Customer frustration (profanity, ALL CAPS, excessive punctuation)
+        frustration = self._detect_frustration(message)
+        if frustration:
+            triggers.append(frustration)
+
         if not triggers:
             return None
 
@@ -620,6 +650,54 @@ class EscalationHandler:
                 if jaccard > 0.6:
                     similar_count += 1
         return similar_count >= threshold
+
+    def _detect_frustration(self, message: str) -> Optional[EscalationTrigger]:
+        """
+        Detect obvious frustration signals that indicate the customer is
+        getting annoyed at speaking to a bot:
+        - Profanity/swear words (word-boundary matched to avoid false positives)
+        - Excessive exclamation marks (3+ in a row or 5+ total)
+        - Excessive question marks (3+ in a row or 5+ total)
+        - ALL CAPS messages (5+ words, >70% uppercase letters)
+        """
+        msg_lower = message.lower()
+        signals = []
+
+        # 1. Profanity check (word-boundary match: "class" won't trigger "ass")
+        matched_profanity = []
+        for word in self.PROFANITY_WORDS:
+            if re.search(r"\b" + re.escape(word) + r"\b", msg_lower):
+                matched_profanity.append(word)
+        if matched_profanity:
+            signals.append(f"profanity: {matched_profanity}")
+
+        # 2. Excessive exclamation marks
+        if re.search(r"!{3,}", message) or message.count("!") >= 5:
+            signals.append("excessive exclamation marks")
+
+        # 3. Excessive question marks
+        if re.search(r"\?{3,}", message) or message.count("?") >= 5:
+            signals.append("excessive question marks")
+
+        # 4. ALL CAPS (at least 5 words, >70% of letters uppercase)
+        words = message.split()
+        alpha_chars = [c for c in message if c.isalpha()]
+        if len(words) >= 5 and len(alpha_chars) > 0:
+            upper_ratio = sum(1 for c in alpha_chars if c.isupper()) / len(alpha_chars)
+            if upper_ratio > 0.7:
+                signals.append("ALL CAPS message")
+
+        if not signals:
+            return None
+
+        # Profanity = high priority; other signals = medium
+        priority = "high" if matched_profanity else "medium"
+
+        return EscalationTrigger(
+            reason="customer_frustration",
+            priority=priority,
+            details=f"Frustration signals: {'; '.join(signals)}",
+        )
 
 
 # ============================================================================

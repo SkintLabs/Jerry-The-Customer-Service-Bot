@@ -15,6 +15,9 @@
 
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 
+// Speech recognition type (varies by browser)
+type SpeechRecognitionType = typeof window extends { SpeechRecognition: infer T } ? T : any
+
 // ============================================================================
 // TYPES
 // ============================================================================
@@ -64,12 +67,19 @@ export function Widget({ shop, server, primaryColor, position }: WidgetProps) {
   const [isConnected, setIsConnected] = useState(false)
   const [connectionError, setConnectionError] = useState('')
 
+  // Voice chat state
+  const [isRecording, setIsRecording] = useState(false)
+  const [ttsEnabled, setTtsEnabled] = useState(false)
+  const [speechSupported, setSpeechSupported] = useState(false)
+
   const wsRef = useRef<WebSocket | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
   const tokenDataRef = useRef<TokenResponse | null>(null)
   const reconnectAttempts = useRef(0)
   const maxReconnectAttempts = 5
+  const recognitionRef = useRef<any>(null)
+  const synthRef = useRef<SpeechSynthesis | null>(null)
 
   // Auto-scroll to bottom on new messages
   useEffect(() => {
@@ -80,6 +90,26 @@ export function Widget({ shop, server, primaryColor, position }: WidgetProps) {
   useEffect(() => {
     if (isOpen && inputRef.current) {
       setTimeout(() => inputRef.current?.focus(), 300)
+    }
+  }, [isOpen])
+
+  // Detect speech API support on mount
+  useEffect(() => {
+    const SpeechRecognition = (window as any).SpeechRecognition
+      || (window as any).webkitSpeechRecognition
+    const synthAvailable = 'speechSynthesis' in window
+    setSpeechSupported(!!SpeechRecognition && synthAvailable)
+    if (synthAvailable) {
+      synthRef.current = window.speechSynthesis
+    }
+  }, [])
+
+  // Cleanup voice on widget close
+  useEffect(() => {
+    if (!isOpen) {
+      recognitionRef.current?.stop()
+      synthRef.current?.cancel()
+      setIsRecording(false)
     }
   }, [isOpen])
 
@@ -158,6 +188,7 @@ export function Widget({ shop, server, primaryColor, position }: WidgetProps) {
           if (data.type === 'message') {
             setIsTyping(false)
             addMessage('assistant', data.text, data.products)
+            speakText(data.text)
           }
         } catch {
           console.error('Jerry The Customer Service Bot: Failed to parse message')
@@ -225,6 +256,65 @@ export function Widget({ shop, server, primaryColor, position }: WidgetProps) {
     }
   }
 
+  // ─────────────── Voice Chat ───────────────
+
+  const speakText = useCallback((text: string) => {
+    if (!ttsEnabled || !synthRef.current) return
+    synthRef.current.cancel()
+    const utterance = new SpeechSynthesisUtterance(text)
+    utterance.lang = 'en-US'
+    utterance.rate = 1.0
+    utterance.pitch = 1.0
+    synthRef.current.speak(utterance)
+  }, [ttsEnabled])
+
+  const toggleRecording = useCallback(() => {
+    if (isRecording) {
+      recognitionRef.current?.stop()
+      setIsRecording(false)
+      return
+    }
+
+    const SpeechRecognition = (window as any).SpeechRecognition
+      || (window as any).webkitSpeechRecognition
+
+    if (!SpeechRecognition) {
+      addMessage('system', 'Speech recognition is not supported in your browser. Try Chrome or Edge.')
+      return
+    }
+
+    // Stop any TTS playback before recording (prevent mic picking up bot speech)
+    synthRef.current?.cancel()
+
+    const recognition = new SpeechRecognition()
+    recognition.lang = 'en-US'
+    recognition.interimResults = false
+    recognition.continuous = false
+    recognition.maxAlternatives = 1
+
+    recognition.onstart = () => setIsRecording(true)
+
+    recognition.onresult = (event: any) => {
+      const transcript = event.results[0][0].transcript.trim()
+      if (transcript) {
+        setInput(transcript)
+        inputRef.current?.focus()
+      }
+    }
+
+    recognition.onerror = (event: any) => {
+      setIsRecording(false)
+      if (event.error === 'not-allowed') {
+        addMessage('system', 'Microphone access denied. Please allow microphone access in your browser settings.')
+      }
+    }
+
+    recognition.onend = () => setIsRecording(false)
+
+    recognitionRef.current = recognition
+    recognition.start()
+  }, [isRecording])
+
   // ─────────────── Render ───────────────
 
   const posStyle = position === 'bottom-left'
@@ -244,11 +334,46 @@ export function Widget({ shop, server, primaryColor, position }: WidgetProps) {
               <div className="sb-header-dot" />
               <span className="sb-header-title">Shopping Assistant</span>
             </div>
-            <button className="sb-close-btn" onClick={() => setIsOpen(false)} aria-label="Close chat">
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                <path d="M1 1L13 13M13 1L1 13" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-              </svg>
-            </button>
+            <div className="sb-header-actions">
+              {speechSupported && (
+                <button
+                  className={`sb-tts-btn ${ttsEnabled ? 'sb-tts-active' : ''}`}
+                  onClick={() => {
+                    setTtsEnabled(prev => {
+                      if (prev) synthRef.current?.cancel()
+                      return !prev
+                    })
+                  }}
+                  aria-label={ttsEnabled ? 'Disable voice responses' : 'Enable voice responses'}
+                  title={ttsEnabled ? 'Voice responses ON' : 'Voice responses OFF'}
+                >
+                  {ttsEnabled ? (
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                      <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"
+                               stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="currentColor" fillOpacity="0.3"/>
+                      <path d="M19.07 4.93a10 10 0 0 1 0 14.14"
+                            stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path d="M15.54 8.46a5 5 0 0 1 0 7.07"
+                            stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  ) : (
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                      <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"
+                               stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      <line x1="23" y1="9" x2="17" y2="15"
+                            stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      <line x1="17" y1="9" x2="23" y2="15"
+                            stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  )}
+                </button>
+              )}
+              <button className="sb-close-btn" onClick={() => setIsOpen(false)} aria-label="Close chat">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                  <path d="M1 1L13 13M13 1L1 13" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                </svg>
+              </button>
+            </div>
           </div>
 
           {/* Messages */}
@@ -317,13 +442,36 @@ export function Widget({ shop, server, primaryColor, position }: WidgetProps) {
               ref={inputRef}
               type="text"
               className="sb-input"
-              placeholder="Ask me anything..."
+              placeholder={isRecording ? 'Listening...' : 'Ask me anything...'}
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
               disabled={!isConnected}
               maxLength={2000}
             />
+            {speechSupported && (
+              <button
+                className={`sb-mic-btn ${isRecording ? 'sb-mic-active' : ''}`}
+                onClick={toggleRecording}
+                disabled={!isConnected}
+                aria-label={isRecording ? 'Stop recording' : 'Start recording'}
+              >
+                {isRecording ? (
+                  <span className="sb-rec-dot" />
+                ) : (
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                    <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"
+                          stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M19 10v2a7 7 0 0 1-14 0v-2"
+                          stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    <line x1="12" y1="19" x2="12" y2="23"
+                          stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    <line x1="8" y1="23" x2="16" y2="23"
+                          stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                )}
+              </button>
+            )}
             <button
               className="sb-send-btn"
               onClick={sendMessage}
@@ -643,6 +791,77 @@ function getStyles(primaryColor: string): string {
       cursor: not-allowed;
     }
 
+    /* ─── Header Actions (TTS + Close grouped) ─── */
+    .sb-header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* ─── TTS Toggle Button ─── */
+    .sb-tts-btn {
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: rgba(255, 255, 255, 0.7);
+      cursor: pointer;
+      padding: 5px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+    }
+    .sb-tts-btn:hover {
+      background: rgba(255, 255, 255, 0.25);
+      color: white;
+    }
+    .sb-tts-active {
+      background: rgba(255, 255, 255, 0.3);
+      color: white;
+      border-color: rgba(255, 255, 255, 0.6);
+    }
+
+    /* ─── Microphone Button ─── */
+    .sb-mic-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #f3f4f6;
+      border: 1px solid #e5e7eb;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #6b7280;
+      flex-shrink: 0;
+      transition: all 0.15s;
+    }
+    .sb-mic-btn:hover:not(:disabled) {
+      background: #e5e7eb;
+      color: #374151;
+    }
+    .sb-mic-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+    .sb-mic-active {
+      background: #fef2f2;
+      border-color: #fca5a5;
+      color: #dc2626;
+      animation: sb-pulse 1.5s ease-in-out infinite;
+    }
+    .sb-rec-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #dc2626;
+      animation: sb-pulse 1.5s ease-in-out infinite;
+    }
+    @keyframes sb-pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.6; transform: scale(0.92); }
+    }
+
     /* ─── Mobile Responsive ─── */
     @media (max-width: 440px) {
       .sb-panel {
@@ -656,6 +875,10 @@ function getStyles(primaryColor: string): string {
       .sb-bubble {
         width: 52px;
         height: 52px;
+      }
+      .sb-mic-btn, .sb-send-btn {
+        width: 36px;
+        height: 36px;
       }
     }
   `
