@@ -33,12 +33,13 @@ import uuid
 from urllib.parse import urlencode
 
 import httpx
-from fastapi import APIRouter, HTTPException, Query, Request, Response
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response
 from fastapi.responses import RedirectResponse, HTMLResponse
 
 from app.core.config import get_settings
 from app.core.security import (
     create_widget_token,
+    verify_admin_token,
     verify_shopify_hmac,
     verify_shopify_webhook,
 )
@@ -343,6 +344,8 @@ async def shopify_webhooks(request: Request):
         await _handle_product_delete(shop_domain, payload)
     elif topic == "refunds/create":
         await _handle_refund_created(shop_domain, payload)
+    elif topic == "orders/create":
+        await _handle_order_created(shop_domain, payload)
     else:
         logger.info(f"Unhandled webhook topic: {topic}")
 
@@ -353,7 +356,7 @@ async def shopify_webhooks(request: Request):
 # STORE INFO ENDPOINT — For admin/debug
 # ============================================================================
 
-@router.get("/stores")
+@router.get("/stores", dependencies=[Depends(verify_admin_token)])
 async def list_stores():
     """List all installed stores (admin endpoint — add auth in production!)."""
     async with get_db() as db:
@@ -383,7 +386,7 @@ async def list_stores():
 # RESYNC — Manual product sync trigger (admin/dev)
 # ============================================================================
 
-@router.post("/resync")
+@router.post("/resync", dependencies=[Depends(verify_admin_token)])
 async def resync_store(
     shop: str = Query(..., description="Store's myshopify.com domain"),
 ):
@@ -504,3 +507,27 @@ async def _handle_refund_created(shop_domain: str, payload: dict) -> None:
         )
     except Exception as e:
         logger.error(f"Refund webhook handler failed: {e}", exc_info=True)
+
+
+async def _handle_order_created(shop_domain: str, payload: dict) -> None:
+    """
+    Handle orders/create webhook for sale attribution.
+    If a chat session was active recently, attribute the sale to Jerry
+    and report revenue share to Stripe billing.
+    """
+    order_id = str(payload.get("id", ""))
+    order_total = float(payload.get("total_price", 0))
+
+    if not order_id or order_total <= 0:
+        return
+
+    try:
+        from main import analytics_service
+        if analytics_service:
+            await analytics_service.record_attributed_sale(
+                shop_domain=shop_domain,
+                shopify_order_id=order_id,
+                order_value=order_total,
+            )
+    except Exception as e:
+        logger.error(f"Order attribution failed: {e}", exc_info=True)

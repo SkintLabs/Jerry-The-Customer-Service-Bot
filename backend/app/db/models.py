@@ -21,6 +21,7 @@ from sqlalchemy import (
     Boolean,
     Column,
     DateTime,
+    ForeignKey,
     Integer,
     String,
     Text,
@@ -98,6 +99,32 @@ class Store(Base):
         comment="Custom welcome message (overrides default)",
     )
 
+    # --- Stripe / Billing ---
+    stripe_customer_id: Mapped[Optional[str]] = mapped_column(
+        String(255), nullable=True,
+        comment="Stripe Customer ID (cus_xxx)",
+    )
+    stripe_subscription_id: Mapped[Optional[str]] = mapped_column(
+        String(255), nullable=True,
+        comment="Stripe Subscription ID (sub_xxx)",
+    )
+    jerry_plan: Mapped[str] = mapped_column(
+        String(32), default="base",
+        comment="Billing plan: base | elite",
+    )
+    monthly_interaction_limit: Mapped[int] = mapped_column(
+        Integer, default=500,
+        comment="Max chat sessions per billing cycle (0 = unlimited)",
+    )
+    current_month_usage: Mapped[int] = mapped_column(
+        Integer, default=0,
+        comment="Sessions used this billing cycle",
+    )
+    billing_cycle_reset: Mapped[Optional[datetime]] = mapped_column(
+        DateTime, nullable=True,
+        comment="When current_month_usage resets",
+    )
+
     # --- Sync state ---
     products_count: Mapped[int] = mapped_column(Integer, default=0)
     products_synced_at: Mapped[Optional[datetime]] = mapped_column(
@@ -133,3 +160,67 @@ class Store(Base):
     def store_id_for_pinecone(self) -> str:
         """Namespace used in Pinecone for this store's products."""
         return self.shopify_domain.replace(".myshopify.com", "")
+
+
+# ---------------------------------------------------------------------------
+# ChatSession — tracks each chat session for usage billing
+# ---------------------------------------------------------------------------
+
+class ChatSession(Base):
+    """Tracks each chat session for usage billing."""
+    __tablename__ = "chat_sessions"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    merchant_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("stores.id", ondelete="CASCADE"), nullable=False, index=True,
+    )
+    session_token: Mapped[str] = mapped_column(String(255), unique=True, nullable=False)
+    human_intervention: Mapped[bool] = mapped_column(Boolean, default=False)
+    resolved: Mapped[bool] = mapped_column(Boolean, default=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=func.now(), nullable=False)
+
+
+# ---------------------------------------------------------------------------
+# SupportResolution — tracks resolved support interactions for metered billing
+# ---------------------------------------------------------------------------
+
+class SupportResolution(Base):
+    """Tracks resolved support interactions for metered billing."""
+    __tablename__ = "support_resolutions"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    merchant_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("stores.id", ondelete="CASCADE"), nullable=False, index=True,
+    )
+    session_id: Mapped[Optional[int]] = mapped_column(
+        Integer, ForeignKey("chat_sessions.id"), nullable=True,
+    )
+    resolution_type: Mapped[str] = mapped_column(
+        String(100), nullable=False,
+        comment="product_recommendation | order_tracked | return_initiated | refund_processed | general_support",
+    )
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=func.now(), nullable=False)
+
+
+# ---------------------------------------------------------------------------
+# AttributedSale — tracks orders attributed to Jerry for revenue share billing
+# ---------------------------------------------------------------------------
+
+class AttributedSale(Base):
+    """Tracks orders attributed to Jerry for revenue share billing."""
+    __tablename__ = "attributed_sales"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    merchant_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("stores.id", ondelete="CASCADE"), nullable=False, index=True,
+    )
+    shopify_order_id: Mapped[str] = mapped_column(String(255), unique=True, nullable=False)
+    order_value: Mapped[float] = mapped_column(
+        Float, nullable=False,
+        comment="Order total in store currency",
+    )
+    commission_cents: Mapped[int] = mapped_column(
+        Integer, default=0,
+        comment="Pre-calculated commission in AUD cents for Stripe metered billing",
+    )
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=func.now(), nullable=False)

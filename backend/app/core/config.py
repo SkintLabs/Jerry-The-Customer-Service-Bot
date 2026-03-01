@@ -70,6 +70,13 @@ class Settings(BaseSettings):
     # --- Redis ---
     redis_url: str = Field(default="", alias="REDIS_URL")
 
+    # --- Stripe ---
+    stripe_secret_key: str = Field(default="", alias="STRIPE_SECRET_KEY")
+    stripe_webhook_secret: str = Field(default="", alias="STRIPE_WEBHOOK_SECRET")
+
+    # --- Admin ---
+    admin_api_key: str = Field(default="dev-admin-key-change-me", alias="ADMIN_API_KEY")
+
     # --- Rate Limits ---
     rate_limit_messages_per_min: int = 30
     max_connections_per_ip: int = 10
@@ -116,6 +123,10 @@ class Settings(BaseSettings):
     @property
     def redis_configured(self) -> bool:
         return bool(self.redis_url)
+
+    @property
+    def stripe_configured(self) -> bool:
+        return bool(self.stripe_secret_key)
 
     @property
     def app_url(self) -> str:

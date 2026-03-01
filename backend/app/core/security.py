@@ -183,3 +183,26 @@ def verify_shopify_webhook(data: bytes, hmac_header: str) -> bool:
     computed_b64 = base64.b64encode(computed).decode("utf-8")
 
     return hmac.compare_digest(computed_b64, hmac_header)
+
+
+# ---------------------------------------------------------------------------
+# Admin API Key — protects internal endpoints
+# ---------------------------------------------------------------------------
+
+from fastapi import HTTPException, Request
+
+ADMIN_API_KEY_HEADER = "X-Admin-API-Key"
+
+
+async def verify_admin_token(request: Request) -> bool:
+    """
+    Verify admin API key from request header.
+    Use as a FastAPI dependency: dependencies=[Depends(verify_admin_token)]
+    """
+    settings = get_settings()
+    api_key = request.headers.get(ADMIN_API_KEY_HEADER, "")
+
+    if not api_key or api_key != settings.admin_api_key:
+        raise HTTPException(status_code=401, detail="Invalid or missing admin API key")
+
+    return True

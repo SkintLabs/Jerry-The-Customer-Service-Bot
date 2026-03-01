@@ -92,6 +92,9 @@ _connections_by_ip: dict[str, int] = defaultdict(int)
 # ---------------------------------------------------------------------------
 conversation_engine = None
 product_intelligence = None
+billing_service = None
+analytics_service = None
+firewall_engine = None
 
 # Active WebSocket connections: session_id → WebSocket
 active_connections: dict[str, WebSocket] = {}
@@ -107,7 +110,7 @@ _session_locks: dict[str, asyncio.Lock] = defaultdict(asyncio.Lock)
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Modern lifespan handler (replaces deprecated @app.on_event)."""
-    global conversation_engine, product_intelligence
+    global conversation_engine, product_intelligence, billing_service, analytics_service, firewall_engine
 
     # --- STARTUP: Initialize Database ---
     try:
@@ -141,7 +144,35 @@ async def lifespan(app: FastAPI):
     else:
         logger.warning("Jerry The Customer Service Bot started in DEGRADED mode — some services unavailable.")
 
-    # Log Shopify integration status
+    # --- STARTUP: Initialize Billing ---
+    try:
+        from app.services.billing_service import BillingService
+        billing_service = BillingService()
+    except Exception as e:
+        logger.error(f"BillingService failed: {e}", exc_info=True)
+        billing_service = None
+
+    # --- STARTUP: Initialize Analytics ---
+    try:
+        from app.services.analytics_service import AnalyticsService
+        analytics_service = AnalyticsService(billing_service=billing_service)
+        if conversation_engine:
+            conversation_engine.analytics = analytics_service
+        logger.info("AnalyticsService initialized.")
+    except Exception as e:
+        logger.error(f"AnalyticsService failed: {e}", exc_info=True)
+        analytics_service = None
+
+    # --- STARTUP: Initialize Firewall ---
+    try:
+        from app.firewall.engine import FirewallEngine
+        embedding_model = product_intelligence.embedding_model if product_intelligence else None
+        firewall_engine = FirewallEngine(embedding_model=embedding_model)
+    except Exception as e:
+        logger.error(f"FirewallEngine failed: {e}", exc_info=True)
+        firewall_engine = None
+
+    # Log integration status
     if settings.shopify_configured:
         logger.info("Shopify integration: CONFIGURED")
     else:
@@ -194,11 +225,18 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Security headers
+from app.core.middleware import SecurityHeadersMiddleware
+app.add_middleware(SecurityHeadersMiddleware)
+
 # ---------------------------------------------------------------------------
-# Mount Shopify API Router
+# Mount API Routers
 # ---------------------------------------------------------------------------
 from app.api.shopify import router as shopify_router
 app.include_router(shopify_router)
+
+from app.api.billing import router as billing_router
+app.include_router(billing_router)
 
 # ---------------------------------------------------------------------------
 # Serve static files (widget JS bundle)
@@ -291,6 +329,10 @@ async def websocket_chat(
     # --- Load or create context ---
     context = await conversation_engine.get_or_create_context(session_id, store_id)
 
+    # Inject canary token for egress filter
+    if firewall_engine and not getattr(context, 'canary_token', None):
+        context.canary_token = firewall_engine.generate_canary_token(session_id)
+
     # --- Send welcome message ---
     welcome = _build_welcome_message(store_id, session_id)
     await websocket.send_json(welcome)
@@ -339,6 +381,27 @@ async def websocket_chat(
                 })
                 continue
 
+            # --- FIREWALL: Inbound scan ---
+            if firewall_engine is not None:
+                try:
+                    verdict = await firewall_engine.scan_inbound(user_message)
+                    if not verdict.allowed:
+                        await websocket.send_json({
+                            "type": "message",
+                            "text": verdict.message,
+                            "intent": "firewall_block",
+                            "products": [],
+                            "escalated": False,
+                            "session_id": session_id,
+                        })
+                        logger.warning(
+                            f"Firewall blocked | session={session_id} | "
+                            f"layer={verdict.blocked_by} | violations={verdict.violations}"
+                        )
+                        continue
+                except Exception as e:
+                    logger.error(f"Firewall inbound error (allowing): {e}")
+
             # --- Typing indicator ---
             await websocket.send_json({"type": "typing"})
 
@@ -360,6 +423,22 @@ async def websocket_chat(
                     "error": "I'm having a moment — please try again!",
                 })
                 continue
+
+            # --- FIREWALL: Outbound scan ---
+            if firewall_engine is not None:
+                try:
+                    canary = getattr(context, 'canary_token', "") or ""
+                    egress_verdict = await firewall_engine.scan_outbound(
+                        engine_response.text, canary
+                    )
+                    if egress_verdict.violations:
+                        logger.warning(
+                            f"Egress violations | session={session_id} | "
+                            f"violations={egress_verdict.violations}"
+                        )
+                    engine_response.text = egress_verdict.message
+                except Exception as e:
+                    logger.error(f"Firewall outbound error (allowing): {e}")
 
             # --- Send response ---
             response_payload = _serialize_engine_response(engine_response)
@@ -401,7 +480,7 @@ async def health_check():
     return {
         "status": "healthy" if all_ready else "degraded",
         "environment": settings.environment,
-        "version": "3.0.0",
+        "version": "4.0.0",
         "services": {
             "conversation_engine": "ready" if engine_ready else "failed",
             "product_intelligence": (
@@ -411,6 +490,9 @@ async def health_check():
             ),
             "shopify": "configured" if settings.shopify_configured else "not_configured",
             "database": "sqlite" if "sqlite" in settings.database_url else "postgresql",
+            "billing": "active" if (billing_service and billing_service.configured) else "disabled",
+            "analytics": "active" if analytics_service else "disabled",
+            "firewall": "active" if firewall_engine else "disabled",
             "active_sessions": len(active_connections),
         },
     }
