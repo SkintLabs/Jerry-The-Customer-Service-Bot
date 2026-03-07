@@ -3,7 +3,7 @@
 Jerry The Customer Service Bot — FastAPI Application Entry Point
 ================================================================================
 File:     backend/main.py
-Version:  3.0.0  (Session 5 — Shopify integration, JWT auth, DB layer)
+Version:  4.0.0  (Session 13 — WonderwallAi SDK, production hardening)
 Session:  5 (February 2026)
 Author:   Built in collaboration with AI assistant
 
@@ -226,7 +226,7 @@ app = FastAPI(
         "Real-time chat via WebSocket, product search via vector embeddings, "
         "natural language responses via Llama 3.3 (Groq)."
     ),
-    version="3.0.0",
+    version="4.0.0",
     docs_url="/docs",
     redoc_url="/redoc",
     lifespan=lifespan,
@@ -518,7 +518,7 @@ async def health_check():
 async def root():
     return {
         "message": "Jerry The Customer Service Bot API is running!",
-        "version": "3.0.0",
+        "version": "4.0.0",
         "docs": "/docs",
         "health": "/health",
         "chat": "ws://localhost:8000/ws/chat/{store_id}/{session_id}?token=xxx",
