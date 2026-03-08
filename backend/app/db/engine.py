@@ -94,13 +94,33 @@ async def _migrate_add_missing_columns() -> None:
     Safe to run repeatedly — skips columns that already exist.
     """
     migrations = [
+        # Store info (added after initial table creation)
+        ("stores", "shopify_store_id", "VARCHAR(64)"),
+        ("stores", "email", "VARCHAR(255)"),
+        ("stores", "shop_owner", "VARCHAR(255)"),
+        ("stores", "currency", "VARCHAR(10) DEFAULT 'USD'"),
+        ("stores", "timezone", "VARCHAR(64)"),
+        ("stores", "plan_name", "VARCHAR(64)"),
+        # Jerry config
+        ("stores", "sunsetbot_plan", "VARCHAR(32) DEFAULT 'trial'"),
+        ("stores", "widget_color", "VARCHAR(7) DEFAULT '#FF6B35'"),
+        ("stores", "welcome_message", "TEXT"),
+        # Stripe / Billing
         ("stores", "stripe_customer_id", "VARCHAR(255)"),
         ("stores", "stripe_subscription_id", "VARCHAR(255)"),
         ("stores", "jerry_plan", "VARCHAR(32) DEFAULT 'base'"),
         ("stores", "monthly_interaction_limit", "INTEGER DEFAULT 500"),
         ("stores", "current_month_usage", "INTEGER DEFAULT 0"),
-        ("stores", "billing_cycle_reset", "DATETIME"),
+        ("stores", "billing_cycle_reset", "TIMESTAMP"),
         ("stores", "subscription_status", "VARCHAR(32) DEFAULT 'none'"),
+        # Sync state
+        ("stores", "products_count", "INTEGER DEFAULT 0"),
+        ("stores", "products_synced_at", "TIMESTAMP"),
+        ("stores", "webhook_registered", "BOOLEAN DEFAULT FALSE"),
+        # Status
+        ("stores", "uninstalled_at", "TIMESTAMP"),
+        # Timestamps
+        ("stores", "updated_at", "TIMESTAMP DEFAULT CURRENT_TIMESTAMP"),
     ]
 
     from sqlalchemy import text
