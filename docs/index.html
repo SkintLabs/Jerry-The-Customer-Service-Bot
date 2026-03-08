@@ -3,52 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jerry The Customer Service Bot — AI Customer Service That Never Sleeps</title>
-    <meta name="description" content="Jerry The Customer Service Bot — AI-powered customer service for Shopify stores. Handles product questions, order tracking, returns, and more — 24/7, in any language. Powered by advanced AI with enterprise-grade security.">
+    <title>Jerry The Customer Service Bot — AI Customer Service for Shopify</title>
+    <meta name="description" content="Jerry The Customer Service Bot is an AI-powered customer service assistant built for Shopify. Semantic product search, order tracking, returns, voice chat, and revenue attribution — 24/7.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;0,900;1,400&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
-        /* ── Jerry Brand: Golden Hour colors + Sunset Boulevard typography ── */
         :root {
-            /* Golden Hour Palette (from theme) */
-            --mustard: #d4a040;          /* Toned-down warm gold (not bright yellow) */
-            --terracotta: #c1666b;       /* Rose/pink — PRIMARY accent */
-            --warm-beige: #d4b896;       /* Warm neutral for text */
-            --chocolate: #4a4032;        /* Deep brown for structure */
-
-            /* Functional Colors — warm-tinted darks */
-            --bg: #0c0b0a;              /* Warm near-black */
-            --bg-subtle: #12110f;        /* Slightly lighter warm dark */
-            --bg-card: #1a1815;          /* Card bg with brown undertone */
-            --bg-card-hover: #221f1b;    /* Hover state */
-            --border: #2a2520;           /* Chocolate-tinted borders */
-            --border-hover: #3d3530;     /* Warm border hover */
-            --text: #d4b896;             /* Warm beige — Golden Hour body text */
-            --text-secondary: #c4a886;   /* Slightly muted beige */
-            --text-muted: #8a7e72;       /* Muted warm gray */
-            --text-bright: #ede8e0;      /* Bright warm white for headings */
-
-            /* Primary = Terracotta (the pinkish color) */
+            --mustard: #d4a040;
+            --terracotta: #c1666b;
+            --warm-beige: #d4b896;
+            --chocolate: #4a4032;
+            --bg: #0c0b0a;
+            --bg-subtle: #12110f;
+            --bg-card: #1a1815;
+            --bg-card-hover: #221f1b;
+            --border: #2a2520;
+            --border-hover: #3d3530;
+            --text: #d4b896;
+            --text-secondary: #c4a886;
+            --text-muted: #8a7e72;
+            --text-bright: #ede8e0;
             --primary: #c1666b;
             --primary-hover: #d47a7f;
             --primary-glow: rgba(193, 102, 107, 0.12);
-
-            /* Accent = Warm gold (toned-down mustard) */
             --accent: #d4a040;
             --accent-hover: #e0b050;
-
-            /* Gradients — terracotta-led, gold as secondary */
             --gradient-warm: linear-gradient(135deg, #c1666b 0%, #d4a040 100%);
             --gradient-text: linear-gradient(135deg, #c1666b 0%, #d4a040 50%, #d4b896 100%);
-            --gradient-sunset: linear-gradient(135deg, #c1666b 0%, #d4a040 100%);
-
-            --code-bg: #0e0d0b;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
         html { scroll-behavior: smooth; }
-
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             background: var(--bg);
@@ -57,316 +43,274 @@
             -webkit-font-smoothing: antialiased;
             overflow-x: hidden;
         }
-
-        /* ── Sunset Boulevard serif for headings ── */
         h1, h2, h3 {
-            font-family: 'Noto Serif', 'DejaVu Serif', Georgia, serif;
+            font-family: 'Noto Serif', Georgia, serif;
             color: var(--text-bright);
         }
-
         a { color: var(--primary); text-decoration: none; transition: color 0.2s; }
         a:hover { color: var(--primary-hover); }
-
         .container { max-width: 1140px; margin: 0 auto; padding: 0 24px; }
-
-        /* ── Animations ── */
-        .fade-in {
-            opacity: 0;
-            transform: translateY(24px);
-            transition: opacity 0.6s ease, transform 0.6s ease;
-        }
+        .fade-in { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
         .fade-in.visible { opacity: 1; transform: translateY(0); }
 
         /* ── NAV ── */
         nav {
-            position: fixed;
-            top: 0; left: 0; right: 0;
-            z-index: 100;
+            position: fixed; top: 0; left: 0; right: 0; z-index: 100;
             background: rgba(12, 11, 10, 0.88);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
             border-bottom: 1px solid var(--border);
         }
-        nav .container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            height: 64px;
-        }
-        .logo {
-            font-family: 'Noto Serif', Georgia, serif;
-            font-size: 1.4rem;
-            font-weight: 900;
-            letter-spacing: -0.02em;
-        }
-        .logo .logo-jerry {
-            color: var(--accent);  /* Gold/yellowy */
-        }
-        .logo .logo-subtitle {
-            color: var(--primary);  /* Terracotta/pink */
-            font-size: 0.7em;
-            font-weight: 700;
-        }
-        .nav-links { display: flex; gap: 32px; align-items: center; }
-        .nav-links a {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-            font-weight: 500;
-            transition: color 0.2s;
-        }
+        nav .container { display: flex; justify-content: space-between; align-items: center; height: 64px; }
+        .logo { font-family: 'Noto Serif', Georgia, serif; font-size: 1.3rem; font-weight: 900; letter-spacing: -0.02em; }
+        .logo .logo-jerry { color: var(--accent); }
+        .logo .logo-sub { color: var(--primary); font-size: 0.65em; font-weight: 700; }
+        .nav-links { display: flex; gap: 28px; align-items: center; }
+        .nav-links a { color: var(--text-secondary); font-size: 0.88rem; font-weight: 500; }
         .nav-links a:hover { color: var(--text); }
         .nav-cta {
-            background: var(--primary) !important;
-            color: var(--text-bright) !important;
+            background: var(--primary) !important; color: var(--text-bright) !important;
             -webkit-text-fill-color: var(--text-bright) !important;
-            padding: 8px 22px;
-            border-radius: 100px;
-            font-weight: 600;
-            font-size: 0.85rem;
-            transition: all 0.2s;
-            border: 1px solid var(--primary);
+            padding: 8px 22px; border-radius: 100px; font-weight: 600; font-size: 0.85rem;
+            transition: all 0.2s; border: 1px solid var(--primary);
         }
         .nav-cta:hover { background: var(--primary-hover) !important; transform: translateY(-1px); }
 
-        /* ── HERO ── */
+        /* ── HERO — split layout (distinct from WonderwallAi centered hero) ── */
         .hero {
-            padding: 160px 0 100px;
-            text-align: center;
+            padding: 140px 0 80px;
             position: relative;
             overflow: hidden;
         }
         .hero::before {
             content: '';
-            position: absolute;
-            top: -50%;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 800px;
-            height: 800px;
-            background: radial-gradient(circle, var(--primary-glow) 0%, transparent 70%);
+            position: absolute; top: 0; right: -10%; width: 700px; height: 700px;
+            background: radial-gradient(circle, rgba(193,102,107,0.08) 0%, transparent 70%);
             pointer-events: none;
         }
-        .hero-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            padding: 6px 16px;
-            border-radius: 100px;
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-            margin-bottom: 32px;
-        }
-        .hero-badge span { color: var(--primary); font-weight: 600; }
-
-        h1 {
-            font-size: clamp(2.8rem, 6vw, 4.5rem);
-            font-weight: 900;
-            line-height: 1.1;
-            letter-spacing: -0.03em;
-            margin-bottom: 24px;
-        }
-        .gradient-text {
-            background: var(--gradient-text);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        .hero-sub {
-            font-size: 1.2rem;
-            color: var(--text-secondary);
-            max-width: 600px;
-            margin: 0 auto 40px;
-            line-height: 1.7;
-        }
-        .hero-buttons { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
-
-        .btn-primary {
-            background: var(--primary);
-            color: var(--text-bright);
-            padding: 16px 36px;
-            border-radius: 100px;
-            font-weight: 700;
-            font-size: 1rem;
-            border: none;
-            cursor: pointer;
-            transition: all 0.25s;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            box-shadow: 0 4px 24px rgba(193, 102, 107, 0.25);
-        }
-        .btn-primary:hover { background: var(--primary-hover); transform: translateY(-2px); color: var(--text-bright); box-shadow: 0 6px 32px rgba(193, 102, 107, 0.35); }
-
-        .btn-secondary {
-            background: transparent;
-            color: var(--warm-beige);
-            padding: 16px 36px;
-            border-radius: 100px;
-            font-weight: 600;
-            font-size: 1rem;
-            border: 1px solid var(--chocolate);
-            cursor: pointer;
-            transition: all 0.25s;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .btn-secondary:hover { border-color: var(--primary); color: var(--primary); background: rgba(193, 102, 107, 0.06); }
-
-        /* ── STATS STRIP (distinct from WonderwallAi) ── */
-        .stats {
+        .hero-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 16px;
-            padding: 48px 0;
-            margin: 0 auto;
-            max-width: 900px;
+            grid-template-columns: 1fr 1fr;
+            gap: 64px;
+            align-items: center;
         }
-        .stat-item {
+        .hero-text h1 {
+            font-size: clamp(2.4rem, 5vw, 3.6rem);
+            font-weight: 900; line-height: 1.1; letter-spacing: -0.03em; margin-bottom: 20px;
+        }
+        .hero-text .gradient-text {
+            background: var(--gradient-text);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+        .hero-text p {
+            font-size: 1.1rem; color: var(--text-secondary); line-height: 1.7; margin-bottom: 32px; max-width: 480px;
+        }
+        .hero-buttons { display: flex; gap: 16px; flex-wrap: wrap; }
+        .btn-primary {
+            background: var(--primary); color: var(--text-bright); padding: 16px 36px;
+            border-radius: 100px; font-weight: 700; font-size: 1rem; border: none;
+            cursor: pointer; transition: all 0.25s; display: inline-flex; align-items: center; gap: 8px;
+            box-shadow: 0 4px 24px rgba(193,102,107,0.25);
+        }
+        .btn-primary:hover { background: var(--primary-hover); transform: translateY(-2px); color: var(--text-bright); box-shadow: 0 6px 32px rgba(193,102,107,0.35); }
+        .btn-secondary {
+            background: transparent; color: var(--warm-beige); padding: 16px 36px;
+            border-radius: 100px; font-weight: 600; font-size: 1rem;
+            border: 1px solid var(--chocolate); cursor: pointer; transition: all 0.25s;
+            display: inline-flex; align-items: center; gap: 8px;
+        }
+        .btn-secondary:hover { border-color: var(--primary); color: var(--primary); background: rgba(193,102,107,0.06); }
+
+        /* Mock chat widget in hero */
+        .hero-chat {
             background: var(--bg-card);
             border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 20px 16px;
-            text-align: center;
-            transition: border-color 0.2s;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 24px 80px rgba(0,0,0,0.4);
+            transform: perspective(800px) rotateY(-3deg);
+            transition: transform 0.4s;
         }
-        .stat-item:hover { border-color: var(--primary); }
-        .stat-icon {
-            font-size: 1.4rem;
-            margin-bottom: 8px;
+        .hero-chat:hover { transform: perspective(800px) rotateY(0deg); }
+        .chat-header {
+            background: var(--primary);
+            padding: 16px 20px;
+            display: flex; align-items: center; gap: 12px;
         }
-        .stat-value {
+        .chat-avatar {
+            width: 36px; height: 36px; border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.1rem;
+        }
+        .chat-header-text { color: var(--text-bright); }
+        .chat-header-text strong { display: block; font-size: 0.95rem; }
+        .chat-header-text span { font-size: 0.75rem; opacity: 0.8; }
+        .chat-messages { padding: 20px; display: flex; flex-direction: column; gap: 12px; min-height: 280px; }
+        .msg {
+            max-width: 85%; padding: 12px 16px; border-radius: 16px;
+            font-size: 0.88rem; line-height: 1.5;
+        }
+        .msg-user {
+            align-self: flex-end; background: var(--primary); color: var(--text-bright);
+            border-bottom-right-radius: 4px;
+        }
+        .msg-bot {
+            align-self: flex-start; background: var(--bg-card-hover); color: var(--text);
+            border: 1px solid var(--border); border-bottom-left-radius: 4px;
+        }
+        .msg-product {
+            align-self: flex-start; background: var(--bg-card-hover);
+            border: 1px solid var(--border); border-radius: 12px;
+            padding: 12px; max-width: 85%;
+        }
+        .msg-product-name { font-size: 0.85rem; font-weight: 600; color: var(--text-bright); }
+        .msg-product-price { font-size: 0.9rem; color: var(--accent); font-weight: 700; font-family: 'Noto Serif', serif; }
+        .msg-product-desc { font-size: 0.78rem; color: var(--text-muted); margin-top: 4px; }
+        .chat-input-bar {
+            padding: 12px 16px; border-top: 1px solid var(--border);
+            display: flex; align-items: center; gap: 8px;
+        }
+        .chat-input-bar input {
+            flex: 1; background: transparent; border: none;
+            color: var(--text-muted); font-size: 0.85rem; outline: none;
+            font-family: 'Inter', sans-serif;
+        }
+        .chat-input-bar button {
+            background: var(--primary); border: none; color: var(--text-bright);
+            width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-size: 0.9rem;
+        }
+
+        /* ── STATS STRIP — horizontal inline (distinct from WonderwallAi card grid) ── */
+        .stats-strip {
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            background: var(--bg-subtle);
+        }
+        .stats-inner {
+            display: flex; justify-content: center; align-items: center;
+            gap: 0; padding: 28px 0; flex-wrap: wrap;
+        }
+        .stat-block {
+            display: flex; align-items: center; gap: 12px; padding: 0 36px;
+            border-right: 1px solid var(--border);
+        }
+        .stat-block:last-child { border-right: none; }
+        .stat-num {
             font-family: 'Noto Serif', Georgia, serif;
-            font-size: 1.6rem;
-            font-weight: 900;
-            color: var(--accent);
+            font-size: 1.8rem; font-weight: 900; color: var(--accent);
         }
-        .stat-label {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            margin-top: 2px;
-        }
+        .stat-text { font-size: 0.82rem; color: var(--text-muted); line-height: 1.3; }
+        .stat-text strong { display: block; color: var(--text-secondary); font-weight: 600; }
 
         /* ── SECTIONS ── */
         section { padding: 100px 0; }
         .section-label {
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 0.15em;
-            color: var(--primary);
-            font-weight: 600;
-            margin-bottom: 12px;
+            font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.15em;
+            color: var(--primary); font-weight: 600; margin-bottom: 12px;
         }
         h2 {
             font-size: clamp(2rem, 4vw, 3rem);
-            font-weight: 900;
-            line-height: 1.15;
-            letter-spacing: -0.02em;
-            margin-bottom: 16px;
+            font-weight: 900; line-height: 1.15; letter-spacing: -0.02em; margin-bottom: 16px;
         }
         .section-desc {
-            font-size: 1.1rem;
-            color: var(--text-secondary);
-            max-width: 600px;
-            line-height: 1.7;
+            font-size: 1.1rem; color: var(--text-secondary); max-width: 600px; line-height: 1.7;
         }
 
-        /* ── PROBLEM SECTION ── */
-        .problem {
+        /* ── CAPABILITIES — alternating rows (distinct from card grid) ── */
+        .capability {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center;
+            padding: 64px 0; border-bottom: 1px solid var(--border);
+        }
+        .capability:last-child { border-bottom: none; }
+        .capability.reverse .cap-visual { order: -1; }
+        .cap-content .cap-tag {
+            display: inline-block; font-size: 0.72rem; text-transform: uppercase;
+            letter-spacing: 0.12em; font-weight: 700; color: var(--accent);
+            background: rgba(212,160,64,0.1); border: 1px solid rgba(212,160,64,0.2);
+            padding: 4px 12px; border-radius: 100px; margin-bottom: 16px;
+        }
+        .cap-content h3 {
+            font-size: 1.6rem; font-weight: 900; margin-bottom: 12px; line-height: 1.2;
+        }
+        .cap-content p {
+            font-size: 0.95rem; color: var(--text-secondary); line-height: 1.7; margin-bottom: 16px;
+        }
+        .cap-bullets { list-style: none; }
+        .cap-bullets li {
+            font-size: 0.88rem; color: var(--text-secondary); padding: 6px 0;
+            display: flex; align-items: flex-start; gap: 10px;
+        }
+        .cap-bullets .dot {
+            width: 6px; height: 6px; border-radius: 50%; background: var(--primary);
+            flex-shrink: 0; margin-top: 8px;
+        }
+        .cap-visual {
+            background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px;
+            padding: 32px; position: relative; overflow: hidden;
+        }
+        .cap-visual::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+            background: var(--gradient-warm);
+        }
+        .cap-visual-label {
+            font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em;
+            color: var(--text-muted); font-weight: 600; margin-bottom: 16px;
+        }
+        .cap-example {
+            font-family: 'JetBrains Mono', monospace; font-size: 0.82rem;
+            color: var(--text-secondary); line-height: 1.8;
+        }
+        .cap-example .user { color: var(--primary); }
+        .cap-example .bot { color: var(--accent); }
+        .cap-example .label { color: var(--text-muted); font-size: 0.72rem; }
+
+        /* ── FULL FEATURE LIST ── */
+        .all-features {
             background: var(--bg-subtle);
             border-top: 1px solid var(--border);
             border-bottom: 1px solid var(--border);
         }
-        .problem-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 24px;
-            margin-top: 48px;
+        .features-columns {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; margin-top: 48px;
         }
-        .problem-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 28px;
-            transition: border-color 0.2s, transform 0.2s;
+        .feature-group h3 {
+            font-size: 1rem; margin-bottom: 16px; display: flex; align-items: center; gap: 10px;
         }
-        .problem-card:hover { border-color: var(--chocolate); transform: translateY(-2px); }
-        .problem-icon { font-size: 1.6rem; margin-bottom: 12px; }
-        .problem-card h3 {
-            font-size: 1.1rem;
-            margin-bottom: 8px;
-            color: var(--text);
+        .feature-group h3 .fg-icon {
+            width: 32px; height: 32px; border-radius: 8px; display: flex;
+            align-items: center; justify-content: center; font-size: 1rem;
+            background: var(--primary-glow); flex-shrink: 0;
         }
-        .problem-card p { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6; }
+        .feature-group ul { list-style: none; }
+        .feature-group ul li {
+            padding: 8px 0; font-size: 0.88rem; color: var(--text-secondary);
+            border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px;
+        }
+        .feature-group ul li:last-child { border-bottom: none; }
+        .feature-group ul li .check { color: var(--accent); font-size: 0.9rem; flex-shrink: 0; }
 
-        /* ── FEATURES ── */
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 24px;
-            margin-top: 48px;
+        /* ── HOW IT WORKS — horizontal timeline (distinct from WonderwallAi numbered list) ── */
+        .timeline {
+            display: flex; gap: 0; margin-top: 56px; position: relative;
         }
-        .feature-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 32px;
-            transition: border-color 0.3s, transform 0.2s;
-            position: relative;
-            overflow: hidden;
+        .timeline::before {
+            content: ''; position: absolute; top: 28px; left: 10%; right: 10%;
+            height: 2px; background: var(--border);
         }
-        .feature-card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0;
-            height: 2px;
-            background: var(--gradient-sunset);
-            opacity: 0;
-            transition: opacity 0.3s;
+        .tl-step {
+            flex: 1; text-align: center; position: relative; padding: 0 16px;
         }
-        .feature-card:hover { border-color: var(--border-hover); transform: translateY(-3px); }
-        .feature-card:hover::before { opacity: 1; }
-        .feature-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.4rem;
-            margin-bottom: 16px;
-            background: var(--primary-glow);
+        .tl-dot {
+            width: 56px; height: 56px; border-radius: 50%;
+            background: var(--bg-card); border: 2px solid var(--primary);
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 20px; position: relative; z-index: 1;
+            font-family: 'Noto Serif', Georgia, serif; font-size: 1.2rem; font-weight: 900;
+            color: var(--accent);
         }
-        .feature-card h3 { font-size: 1.15rem; margin-bottom: 8px; }
-        .feature-card p { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6; }
-
-        /* ── HOW IT WORKS ── */
-        .steps {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 32px;
-            margin-top: 48px;
-        }
-        .step {
-            text-align: center;
-            padding: 32px 24px;
-            position: relative;
-        }
-        .step-number {
-            font-family: 'Noto Serif', Georgia, serif;
-            font-size: 3.5rem;
-            font-weight: 900;
-            background: var(--gradient-text);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            line-height: 1;
-            margin-bottom: 16px;
-        }
-        .step h3 { font-size: 1.2rem; margin-bottom: 8px; }
-        .step p { font-size: 0.9rem; color: var(--text-secondary); }
+        .tl-step h3 { font-size: 1.1rem; margin-bottom: 8px; }
+        .tl-step p { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.6; }
 
         /* ── SECURITY ── */
         .security {
@@ -374,55 +318,30 @@
             border-top: 1px solid var(--border);
             border-bottom: 1px solid var(--border);
         }
-        .security-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: rgba(74, 64, 50, 0.3);
-            border: 1px solid var(--chocolate);
-            padding: 4px 14px;
-            border-radius: 100px;
-            font-size: 0.8rem;
-            color: var(--warm-beige);
-            font-weight: 600;
-            margin-bottom: 16px;
-        }
-        .security-features {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 16px;
-            margin-top: 32px;
+        .security-grid {
+            display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-top: 32px;
         }
         .security-item {
-            display: flex;
-            align-items: flex-start;
-            gap: 12px;
-            padding: 16px;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 10px;
+            display: flex; align-items: flex-start; gap: 14px; padding: 20px;
+            background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px;
         }
-        .security-check { color: var(--accent); font-size: 1.1rem; flex-shrink: 0; margin-top: 2px; }
-        .security-item strong { display: block; font-size: 0.9rem; margin-bottom: 2px; }
-        .security-item span { font-size: 0.8rem; color: var(--text-muted); }
+        .security-icon {
+            width: 40px; height: 40px; border-radius: 10px;
+            background: rgba(74,64,50,0.4); display: flex; align-items: center;
+            justify-content: center; font-size: 1.1rem; flex-shrink: 0;
+        }
+        .security-item strong { display: block; font-size: 0.92rem; margin-bottom: 4px; color: var(--text-bright); }
+        .security-item span { font-size: 0.82rem; color: var(--text-muted); line-height: 1.5; }
 
         /* ── PRICING ── */
         .pricing-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
-            gap: 24px;
-            margin-top: 48px;
-            max-width: 780px;
-            margin-left: auto;
-            margin-right: auto;
+            display: grid; grid-template-columns: repeat(2, 1fr);
+            gap: 24px; margin-top: 48px; max-width: 780px;
+            margin-left: auto; margin-right: auto;
         }
         .price-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 36px;
-            position: relative;
-            transition: transform 0.2s;
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: 16px; padding: 36px; position: relative; transition: transform 0.2s;
         }
         .price-card:hover { transform: translateY(-3px); }
         .price-card.featured {
@@ -430,117 +349,80 @@
             box-shadow: 0 0 40px var(--primary-glow);
         }
         .price-card.featured::before {
-            content: 'Most Popular';
-            position: absolute;
-            top: -12px; left: 50%;
-            transform: translateX(-50%);
-            background: var(--gradient-sunset);
-            color: #000;
-            font-size: 0.75rem;
-            font-weight: 700;
-            padding: 4px 16px;
-            border-radius: 100px;
+            content: 'Most Popular'; position: absolute; top: -12px; left: 50%;
+            transform: translateX(-50%); background: var(--gradient-warm);
+            color: #000; font-size: 0.75rem; font-weight: 700;
+            padding: 4px 16px; border-radius: 100px;
         }
-        .price-name {
-            font-family: 'Noto Serif', Georgia, serif;
-            font-size: 1.3rem;
-            font-weight: 700;
-            margin-bottom: 4px;
-        }
+        .price-name { font-family: 'Noto Serif', Georgia, serif; font-size: 1.3rem; font-weight: 700; margin-bottom: 4px; }
         .price-desc { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 20px; }
         .price-amount {
             font-family: 'Noto Serif', Georgia, serif;
-            font-size: 2.8rem;
-            font-weight: 900;
-            color: var(--accent);  /* Gold for prices */
+            font-size: 2.8rem; font-weight: 900; color: var(--accent);
         }
         .price-amount span { font-size: 1rem; color: var(--text-muted); font-weight: 400; }
         .price-period { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 24px; }
         .price-features { list-style: none; margin-bottom: 28px; }
         .price-features li {
-            padding: 8px 0;
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            padding: 8px 0; font-size: 0.9rem; color: var(--text-secondary);
+            border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px;
         }
         .price-features li:last-child { border-bottom: none; }
         .price-features .check { color: var(--accent); }
-
         .btn-price {
-            display: block;
-            width: 100%;
-            text-align: center;
-            padding: 14px;
-            border-radius: 100px;
-            font-weight: 700;
-            font-size: 0.95rem;
-            cursor: pointer;
-            transition: all 0.25s;
+            display: block; width: 100%; text-align: center; padding: 14px;
+            border-radius: 100px; font-weight: 700; font-size: 0.95rem;
+            cursor: pointer; transition: all 0.25s;
         }
         .btn-price-primary {
-            background: var(--primary);
-            color: var(--text-bright);
-            border: none;
-            box-shadow: 0 4px 20px rgba(193, 102, 107, 0.2);
+            background: var(--primary); color: var(--text-bright); border: none;
+            box-shadow: 0 4px 20px rgba(193,102,107,0.2);
         }
-        .btn-price-primary:hover { background: var(--primary-hover); color: var(--text-bright); box-shadow: 0 6px 28px rgba(193, 102, 107, 0.3); }
+        .btn-price-primary:hover { background: var(--primary-hover); color: var(--text-bright); }
         .btn-price-secondary {
-            background: transparent;
-            color: var(--warm-beige);
-            border: 1px solid var(--chocolate);
+            background: transparent; color: var(--warm-beige); border: 1px solid var(--chocolate);
         }
         .btn-price-secondary:hover { border-color: var(--primary); color: var(--primary); }
 
         /* ── CTA ── */
         .cta-section {
-            text-align: center;
-            padding: 120px 0;
-            position: relative;
+            text-align: center; padding: 120px 0; position: relative;
         }
         .cta-section::before {
-            content: '';
-            position: absolute;
-            bottom: 0; left: 50%;
-            transform: translateX(-50%);
-            width: 600px;
-            height: 600px;
+            content: ''; position: absolute; bottom: 0; left: 50%;
+            transform: translateX(-50%); width: 600px; height: 600px;
             background: radial-gradient(circle, var(--primary-glow) 0%, transparent 70%);
             pointer-events: none;
         }
-        .cta-section h2 { margin-bottom: 16px; }
 
         /* ── FOOTER ── */
-        footer {
-            border-top: 1px solid var(--border);
-            padding: 48px 0;
-        }
+        footer { border-top: 1px solid var(--border); padding: 48px 0; }
         .footer-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 24px;
+            display: flex; justify-content: space-between; align-items: center;
+            flex-wrap: wrap; gap: 24px;
         }
         .footer-links { display: flex; gap: 24px; }
         .footer-links a { color: var(--text-muted); font-size: 0.85rem; }
         .footer-links a:hover { color: var(--text); }
         .footer-copy { font-size: 0.8rem; color: var(--text-muted); }
-        .footer-shield {
-            font-size: 0.75rem;
-            color: var(--terracotta);
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
+        .footer-shield { font-size: 0.75rem; color: var(--terracotta); display: flex; align-items: center; gap: 6px; }
 
         /* ── MOBILE ── */
+        @media (max-width: 900px) {
+            .hero-grid { grid-template-columns: 1fr; gap: 40px; }
+            .hero-chat { transform: none; max-width: 400px; margin: 0 auto; }
+            .capability { grid-template-columns: 1fr; gap: 32px; }
+            .capability.reverse .cap-visual { order: 0; }
+            .features-columns { grid-template-columns: 1fr; }
+            .security-grid { grid-template-columns: 1fr; }
+            .timeline { flex-direction: column; gap: 32px; }
+            .timeline::before { display: none; }
+        }
         @media (max-width: 768px) {
             .nav-links a:not(.nav-cta) { display: none; }
-            .stats { grid-template-columns: repeat(2, 1fr); gap: 12px; }
-            .steps { grid-template-columns: 1fr; gap: 16px; }
+            .stats-inner { flex-direction: column; gap: 16px; }
+            .stat-block { border-right: none; border-bottom: 1px solid var(--border); padding: 12px 0; }
+            .stat-block:last-child { border-bottom: none; }
             .pricing-grid { grid-template-columns: 1fr; }
             .footer-content { flex-direction: column; text-align: center; }
             .footer-links { justify-content: center; }
@@ -548,155 +430,357 @@
     </style>
 </head>
 <body>
+
     <!-- NAV -->
     <nav>
         <div class="container">
-            <div class="logo"><span class="logo-jerry">Jerry</span> <span class="logo-subtitle">The Customer Service Bot</span></div>
+            <div class="logo">
+                <span class="logo-jerry">Jerry</span> <span class="logo-sub">The Customer Service Bot</span>
+            </div>
             <div class="nav-links">
+                <a href="#capabilities">Capabilities</a>
                 <a href="#features">Features</a>
                 <a href="#how-it-works">How It Works</a>
                 <a href="#pricing">Pricing</a>
-                <a href="#security">Security</a>
-                <a class="nav-cta" href="#cta">Try Jerry Free</a>
+                <a class="nav-cta" href="#cta">Get Started</a>
             </div>
         </div>
     </nav>
 
-    <!-- HERO -->
+    <!-- HERO — split layout -->
     <section class="hero">
-        <div class="container fade-in">
-            <div class="hero-badge">
-                <span>Shopify Native</span> &middot; AI-Powered Customer Service
-            </div>
-            <h1>
-                AI Customer Service<br>
-                <span class="gradient-text">That Never Sleeps</span>
-            </h1>
-            <p class="hero-sub">
-                Jerry The Customer Service Bot handles your Shopify store's support &mdash;
-                product questions, order tracking, returns &mdash; instantly, 24/7, in any language.
-            </p>
-            <div class="hero-buttons">
-                <a class="btn-primary" href="#cta">Try Jerry Free &rarr;</a>
-                <a class="btn-secondary" href="#how-it-works">Watch Demo</a>
+        <div class="container">
+            <div class="hero-grid fade-in">
+                <div class="hero-text">
+                    <h1>
+                        Meet <span class="gradient-text">Jerry The Customer Service Bot</span>
+                    </h1>
+                    <p>
+                        The AI assistant that knows every product in your Shopify store, tracks every order,
+                        handles returns, speaks 50+ languages, and never takes a day off.
+                    </p>
+                    <div class="hero-buttons">
+                        <a class="btn-primary" href="#cta">Try Jerry The Customer Service Bot Free &rarr;</a>
+                        <a class="btn-secondary" href="#capabilities">See Capabilities</a>
+                    </div>
+                </div>
+                <div class="hero-chat">
+                    <div class="chat-header">
+                        <div class="chat-avatar">&#129302;</div>
+                        <div class="chat-header-text">
+                            <strong>Jerry The Customer Service Bot</strong>
+                            <span>Online &middot; Typically replies instantly</span>
+                        </div>
+                    </div>
+                    <div class="chat-messages">
+                        <div class="msg msg-user">Do you have any red dresses under $60?</div>
+                        <div class="msg msg-bot">I found 3 red dresses in your price range! Here's my top pick:</div>
+                        <div class="msg-product">
+                            <div class="msg-product-name">Sunset Midi Wrap Dress</div>
+                            <div class="msg-product-price">$54.99</div>
+                            <div class="msg-product-desc">Crimson red &middot; XS-XL &middot; Free shipping over $50</div>
+                        </div>
+                        <div class="msg msg-user">What about in a size medium?</div>
+                        <div class="msg msg-bot">The medium is in stock and ready to ship! Would you like me to help with anything else?</div>
+                    </div>
+                    <div class="chat-input-bar">
+                        <input type="text" placeholder="Ask Jerry anything..." disabled>
+                        <button>&#8593;</button>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
 
-    <!-- STATS -->
-    <div class="container fade-in">
-        <div class="stats">
-            <div class="stat-item">
-                <div class="stat-icon">&#9889;</div>
-                <div class="stat-value">&lt;2s</div>
-                <div class="stat-label">Response Time</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-icon">&#127769;</div>
-                <div class="stat-value">24/7</div>
-                <div class="stat-label">Always On</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-icon">&#127760;</div>
-                <div class="stat-value">50+</div>
-                <div class="stat-label">Languages</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-icon">&#128722;</div>
-                <div class="stat-value">100%</div>
-                <div class="stat-label">Shopify Native</div>
+    <!-- STATS STRIP — horizontal with dividers -->
+    <div class="stats-strip">
+        <div class="container">
+            <div class="stats-inner fade-in">
+                <div class="stat-block">
+                    <div class="stat-num">&lt;2s</div>
+                    <div class="stat-text"><strong>Response Time</strong>AI-powered instant replies</div>
+                </div>
+                <div class="stat-block">
+                    <div class="stat-num">24/7</div>
+                    <div class="stat-text"><strong>Always Available</strong>Never misses a customer</div>
+                </div>
+                <div class="stat-block">
+                    <div class="stat-num">50+</div>
+                    <div class="stat-text"><strong>Languages</strong>Speak to any customer</div>
+                </div>
+                <div class="stat-block">
+                    <div class="stat-num">100%</div>
+                    <div class="stat-text"><strong>Shopify Integrated</strong>Products, orders, refunds</div>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- PROBLEM -->
-    <section class="problem" id="problem">
+    <!-- CAPABILITIES — detailed alternating rows -->
+    <section id="capabilities">
         <div class="container">
-            <div class="section-label">The Problem</div>
-            <h2>Your customers expect <span class="gradient-text">instant answers</span></h2>
-            <p class="section-desc">But you can't afford a 24/7 support team. And generic chatbots don't know your products.</p>
-            <div class="problem-grid fade-in">
-                <div class="problem-card">
-                    <div class="problem-icon">&#9203;</div>
-                    <h3>Slow Response Times</h3>
-                    <p>Customers abandon carts when support takes hours. 53% expect a response within 10 minutes.</p>
+            <div class="section-label">What Jerry The Customer Service Bot Can Do</div>
+            <h2>A complete AI employee, <span class="gradient-text">not a chatbot</span></h2>
+            <p class="section-desc">
+                Jerry The Customer Service Bot doesn't use scripted responses. It understands natural language, searches your real product data, and gives customers genuinely helpful answers.
+            </p>
+
+            <!-- Capability 1: Semantic Product Search -->
+            <div class="capability fade-in">
+                <div class="cap-content">
+                    <div class="cap-tag">Core Capability</div>
+                    <h3>Semantic Product Search</h3>
+                    <p>
+                        Jerry The Customer Service Bot syncs your entire Shopify catalog and builds a semantic understanding of every product. Customers can search using natural language, not just keywords.
+                    </p>
+                    <ul class="cap-bullets">
+                        <li><span class="dot"></span>Understands vague queries: "something for the beach under $50"</li>
+                        <li><span class="dot"></span>Extracts price, size, colour, material, and occasion automatically</li>
+                        <li><span class="dot"></span>Category intelligence: "shoes" also finds boots, sneakers, sandals</li>
+                        <li><span class="dot"></span>Follow-up detection: "show me more like that" continues the search</li>
+                        <li><span class="dot"></span>Real-time inventory — only recommends products that are in stock</li>
+                    </ul>
                 </div>
-                <div class="problem-card">
-                    <div class="problem-icon">&#127760;</div>
-                    <h3>Limited Hours &amp; Languages</h3>
-                    <p>Your team sleeps. Your international customers don't. Missed queries mean missed revenue.</p>
+                <div class="cap-visual">
+                    <div class="cap-visual-label">Example Conversation</div>
+                    <div class="cap-example">
+                        <span class="label">Customer:</span><br>
+                        <span class="user">"I need a warm jacket for hiking, nothing too expensive"</span><br><br>
+                        <span class="label">Jerry The Customer Service Bot:</span><br>
+                        <span class="bot">"I found 4 jackets perfect for hiking! Here's my top pick — the Alpine Trail Fleece at $89. It's water-resistant, rated to -5&deg;C, and available in your size. Want to see the others?"</span>
+                    </div>
                 </div>
-                <div class="problem-card">
-                    <div class="problem-icon">&#129302;</div>
-                    <h3>Generic Chatbots</h3>
-                    <p>They don't know your products, your policies, or your brand voice. Customers can tell.</p>
+            </div>
+
+            <!-- Capability 2: Order Tracking -->
+            <div class="capability reverse fade-in">
+                <div class="cap-content">
+                    <div class="cap-tag">Post-Purchase</div>
+                    <h3>Order Tracking &amp; WISMO</h3>
+                    <p>
+                        "Where Is My Order?" is the #1 support query for e-commerce. Jerry The Customer Service Bot handles it instantly by connecting directly to your Shopify orders, shipping data, and fulfilment status.
+                    </p>
+                    <ul class="cap-bullets">
+                        <li><span class="dot"></span>Real-time order status from Shopify Admin API</li>
+                        <li><span class="dot"></span>Shipping carrier tracking with delivery estimates</li>
+                        <li><span class="dot"></span>Proactive updates when fulfilment status changes</li>
+                        <li><span class="dot"></span>Handles multi-item orders with partial shipments</li>
+                        <li><span class="dot"></span>No more "let me check" — customers get answers in seconds</li>
+                    </ul>
+                </div>
+                <div class="cap-visual">
+                    <div class="cap-visual-label">Example Conversation</div>
+                    <div class="cap-example">
+                        <span class="label">Customer:</span><br>
+                        <span class="user">"Where's my order #4821?"</span><br><br>
+                        <span class="label">Jerry The Customer Service Bot:</span><br>
+                        <span class="bot">"Your order #4821 shipped on March 5 via Australia Post. Tracking shows it's currently in transit and estimated delivery is March 10. Here's your tracking link."</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Capability 3: Returns & Refunds -->
+            <div class="capability fade-in">
+                <div class="cap-content">
+                    <div class="cap-tag">Support Automation</div>
+                    <h3>Returns, Refunds &amp; Policy Queries</h3>
+                    <p>
+                        Jerry The Customer Service Bot knows your store's return policy, checks eligibility windows, and guides customers through the process — reducing your support team's workload dramatically.
+                    </p>
+                    <ul class="cap-bullets">
+                        <li><span class="dot"></span>Explains your return policy in plain language</li>
+                        <li><span class="dot"></span>Checks if items are within the return window</li>
+                        <li><span class="dot"></span>Initiates returns and refunds through Shopify</li>
+                        <li><span class="dot"></span>Handles exchanges and store credit options</li>
+                        <li><span class="dot"></span>Processes refund webhooks and notifies customers</li>
+                    </ul>
+                </div>
+                <div class="cap-visual">
+                    <div class="cap-visual-label">Example Conversation</div>
+                    <div class="cap-example">
+                        <span class="label">Customer:</span><br>
+                        <span class="user">"I want to return the blue sweater from last week"</span><br><br>
+                        <span class="label">Jerry The Customer Service Bot:</span><br>
+                        <span class="bot">"I can see your order from March 2. The blue sweater is within your 30-day return window. Would you like a full refund to your original payment method, or would you prefer store credit?"</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Capability 4: Voice + Multilingual -->
+            <div class="capability reverse fade-in">
+                <div class="cap-content">
+                    <div class="cap-tag">Accessibility</div>
+                    <h3>Voice Chat &amp; 50+ Languages</h3>
+                    <p>
+                        Jerry The Customer Service Bot speaks to every customer in their language. Built-in voice chat uses the browser's Web Speech API — no external services, no extra cost, no latency.
+                    </p>
+                    <ul class="cap-bullets">
+                        <li><span class="dot"></span>Speech-to-text: customers can talk instead of type</li>
+                        <li><span class="dot"></span>Text-to-speech: Jerry reads responses aloud</li>
+                        <li><span class="dot"></span>50+ languages supported out of the box</li>
+                        <li><span class="dot"></span>Automatic language detection — no settings to change</li>
+                        <li><span class="dot"></span>Zero external API calls — runs entirely in the browser</li>
+                    </ul>
+                </div>
+                <div class="cap-visual">
+                    <div class="cap-visual-label">Voice + Multilingual</div>
+                    <div class="cap-example">
+                        <span class="label">Customer (Spanish):</span><br>
+                        <span class="user">"&iquest;Tienen vestidos rojos?"</span><br><br>
+                        <span class="label">Jerry The Customer Service Bot:</span><br>
+                        <span class="bot">"&iexcl;S&iacute;! Tenemos 3 vestidos rojos disponibles. El m&aacute;s popular es el Sunset Wrap Dress a $54.99. &iquest;Te gustar&iacute;a ver los detalles?"</span><br><br>
+                        <span class="label" style="color: var(--text-muted); font-style: italic;">&#127908; Voice input detected &middot; responding in Spanish</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Capability 5: Revenue Attribution -->
+            <div class="capability fade-in">
+                <div class="cap-content">
+                    <div class="cap-tag">Business Intelligence</div>
+                    <h3>Revenue Attribution &amp; Analytics</h3>
+                    <p>
+                        Jerry The Customer Service Bot doesn't just answer questions — it drives revenue. Track exactly which conversations lead to purchases and measure the ROI of every interaction.
+                    </p>
+                    <ul class="cap-bullets">
+                        <li><span class="dot"></span>24-hour attribution window — links conversations to sales</li>
+                        <li><span class="dot"></span>Per-conversation revenue tracking via Shopify order webhooks</li>
+                        <li><span class="dot"></span>Resolution tracking — see how many queries Jerry solves</li>
+                        <li><span class="dot"></span>Usage dashboard with conversations, resolutions, and revenue</li>
+                        <li><span class="dot"></span>Know exactly how much revenue Jerry The Customer Service Bot generates</li>
+                    </ul>
+                </div>
+                <div class="cap-visual">
+                    <div class="cap-visual-label">Dashboard Preview</div>
+                    <div class="cap-example" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                        <div style="background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 16px; text-align: center;">
+                            <div style="font-family: 'Noto Serif', serif; font-size: 1.6rem; font-weight: 900; color: var(--accent);">847</div>
+                            <div style="font-size: 0.72rem; color: var(--text-muted);">Conversations</div>
+                        </div>
+                        <div style="background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 16px; text-align: center;">
+                            <div style="font-family: 'Noto Serif', serif; font-size: 1.6rem; font-weight: 900; color: var(--accent);">94%</div>
+                            <div style="font-size: 0.72rem; color: var(--text-muted);">Resolved</div>
+                        </div>
+                        <div style="background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 16px; text-align: center;">
+                            <div style="font-family: 'Noto Serif', serif; font-size: 1.6rem; font-weight: 900; color: var(--accent);">$12.4k</div>
+                            <div style="font-size: 0.72rem; color: var(--text-muted);">Revenue Attributed</div>
+                        </div>
+                        <div style="background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 16px; text-align: center;">
+                            <div style="font-family: 'Noto Serif', serif; font-size: 1.6rem; font-weight: 900; color: var(--accent);">1.8s</div>
+                            <div style="font-size: 0.72rem; color: var(--text-muted);">Avg Response</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Capability 6: Smart Escalation -->
+            <div class="capability reverse fade-in">
+                <div class="cap-content">
+                    <div class="cap-tag">Human Handoff</div>
+                    <h3>Smart Escalation &amp; Sentiment Detection</h3>
+                    <p>
+                        Jerry The Customer Service Bot knows when to step aside. Built-in sentiment analysis detects frustrated, angry, or vulnerable customers and seamlessly escalates to your human team — with full context.
+                    </p>
+                    <ul class="cap-bullets">
+                        <li><span class="dot"></span>Real-time sentiment tracking across the conversation</li>
+                        <li><span class="dot"></span>Automatic escalation on negative sentiment thresholds</li>
+                        <li><span class="dot"></span>VIP customer detection and priority routing</li>
+                        <li><span class="dot"></span>Keyword-based escalation for legal/safety concerns</li>
+                        <li><span class="dot"></span>Full conversation history handed to your support team</li>
+                    </ul>
+                </div>
+                <div class="cap-visual">
+                    <div class="cap-visual-label">Escalation Example</div>
+                    <div class="cap-example">
+                        <span class="label">Customer (frustrated):</span><br>
+                        <span class="user">"This is ridiculous, I've been waiting 3 weeks for my order and nobody is helping me!"</span><br><br>
+                        <span class="label">Jerry The Customer Service Bot:</span><br>
+                        <span class="bot">"I completely understand your frustration and I'm sorry about the delay. I'm connecting you with a member of our support team right now so they can resolve this for you personally."</span><br><br>
+                        <span class="label" style="color: var(--terracotta); font-style: italic;">&#128680; Escalated — negative sentiment detected &middot; context forwarded</span>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- FEATURES -->
-    <section id="features">
+    <!-- FULL FEATURE LIST -->
+    <section class="all-features" id="features">
         <div class="container">
-            <div class="section-label">Features</div>
-            <h2><span style="color: var(--accent);">Jerry</span> <span style="color: var(--primary);">knows your store</span></h2>
-            <p class="section-desc">Automatic product sync, real-time inventory, and intelligent conversation &mdash; not scripted responses.</p>
-            <div class="features-grid fade-in">
-                <div class="feature-card">
-                    <div class="feature-icon">&#128269;</div>
-                    <h3>Product Intelligence</h3>
-                    <p>Jerry syncs your entire Shopify catalog and uses semantic search to find exactly what customers are looking for &mdash; even with vague descriptions.</p>
+            <div style="text-align: center;">
+                <div class="section-label">Everything Included</div>
+                <h2>The complete <span class="gradient-text">feature set</span></h2>
+                <p class="section-desc" style="margin: 0 auto;">Every plan includes the full Jerry The Customer Service Bot platform. No features locked behind paywalls.</p>
+            </div>
+            <div class="features-columns fade-in">
+                <div class="feature-group">
+                    <h3><span class="fg-icon">&#128269;</span> AI Intelligence</h3>
+                    <ul>
+                        <li><span class="check">&#10003;</span> Semantic product search (not keyword-based)</li>
+                        <li><span class="check">&#10003;</span> Natural language understanding</li>
+                        <li><span class="check">&#10003;</span> Intent classification (search, track, return, etc.)</li>
+                        <li><span class="check">&#10003;</span> Entity extraction (price, size, colour, material)</li>
+                        <li><span class="check">&#10003;</span> Category groups (shoes &#8594; boots, sneakers, sandals)</li>
+                        <li><span class="check">&#10003;</span> Follow-up detection ("show me more like that")</li>
+                        <li><span class="check">&#10003;</span> Conversation context memory</li>
+                        <li><span class="check">&#10003;</span> Sentiment analysis &amp; frustration detection</li>
+                    </ul>
                 </div>
-                <div class="feature-card">
-                    <div class="feature-icon">&#128230;</div>
-                    <h3>Order Tracking</h3>
-                    <p>Real-time order status, shipping updates, and delivery estimates. Connected directly to your Shopify orders via webhooks.</p>
+                <div class="feature-group">
+                    <h3><span class="fg-icon">&#128722;</span> Shopify Integration</h3>
+                    <ul>
+                        <li><span class="check">&#10003;</span> One-click OAuth install</li>
+                        <li><span class="check">&#10003;</span> Full product catalog sync</li>
+                        <li><span class="check">&#10003;</span> Real-time product webhooks (add/update/delete)</li>
+                        <li><span class="check">&#10003;</span> Order tracking via Admin API</li>
+                        <li><span class="check">&#10003;</span> Returns &amp; refund processing</li>
+                        <li><span class="check">&#10003;</span> Order creation webhooks for attribution</li>
+                        <li><span class="check">&#10003;</span> Multi-store support</li>
+                        <li><span class="check">&#10003;</span> Inventory-aware recommendations</li>
+                    </ul>
                 </div>
-                <div class="feature-card">
-                    <div class="feature-icon">&#128257;</div>
-                    <h3>Returns &amp; Refunds</h3>
-                    <p>Guides customers through your return policy, checks eligibility windows, and initiates the process &mdash; all automatically.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">&#127908;</div>
-                    <h3>Voice Chat</h3>
-                    <p>Built-in speech-to-text and text-to-speech using the browser's Web Speech API. No external services, no extra cost.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">&#128200;</div>
-                    <h3>Revenue Attribution</h3>
-                    <p>Track which conversations lead to purchases. See exactly how much revenue Jerry generates for your store.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">&#128680;</div>
-                    <h3>Smart Escalation</h3>
-                    <p>When Jerry can't help, it seamlessly escalates to your human team with full conversation context. No dead ends.</p>
+                <div class="feature-group">
+                    <h3><span class="fg-icon">&#128737;</span> Platform &amp; Security</h3>
+                    <ul>
+                        <li><span class="check">&#10003;</span> WonderwallAi prompt injection firewall</li>
+                        <li><span class="check">&#10003;</span> Data leak prevention (PII, API keys)</li>
+                        <li><span class="check">&#10003;</span> Topic enforcement (stays on-topic)</li>
+                        <li><span class="check">&#10003;</span> Voice chat (speech-to-text &amp; text-to-speech)</li>
+                        <li><span class="check">&#10003;</span> 50+ language support</li>
+                        <li><span class="check">&#10003;</span> Revenue attribution dashboard</li>
+                        <li><span class="check">&#10003;</span> Smart escalation to human agents</li>
+                        <li><span class="check">&#10003;</span> Embeddable widget (shadow DOM isolated)</li>
+                    </ul>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- HOW IT WORKS -->
-    <section id="how-it-works" style="background: var(--bg-subtle); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+    <!-- HOW IT WORKS — horizontal timeline -->
+    <section id="how-it-works">
         <div class="container" style="text-align: center;">
             <div class="section-label">How It Works</div>
-            <h2>Live in <span class="gradient-text">three steps</span></h2>
-            <p class="section-desc" style="margin: 0 auto;">No code required. Jerry connects to your Shopify store and starts learning immediately.</p>
-            <div class="steps fade-in">
-                <div class="step">
-                    <div class="step-number">1</div>
+            <h2>Jerry The Customer Service Bot goes live <span class="gradient-text">in minutes</span></h2>
+            <p class="section-desc" style="margin: 0 auto;">No code required. Jerry The Customer Service Bot connects to your Shopify store and starts learning your catalog immediately.</p>
+            <div class="timeline fade-in">
+                <div class="tl-step">
+                    <div class="tl-dot">1</div>
                     <h3>Install</h3>
-                    <p>Add Jerry to your Shopify store with one click. The widget appears on your storefront in seconds.</p>
+                    <p>Add Jerry The Customer Service Bot to your Shopify store with one click. OAuth handles everything — no API keys, no code.</p>
                 </div>
-                <div class="step">
-                    <div class="step-number">2</div>
-                    <h3>Train</h3>
-                    <p>Jerry automatically syncs your product catalog, collections, and store policies. No manual configuration.</p>
+                <div class="tl-step">
+                    <div class="tl-dot">2</div>
+                    <h3>Sync</h3>
+                    <p>Jerry The Customer Service Bot automatically syncs your entire product catalog, collections, pricing, and inventory into its semantic search engine.</p>
                 </div>
-                <div class="step">
-                    <div class="step-number">3</div>
-                    <h3>Launch</h3>
-                    <p>Go live and start handling customer queries instantly. Monitor conversations and revenue from your dashboard.</p>
+                <div class="tl-step">
+                    <div class="tl-dot">3</div>
+                    <h3>Go Live</h3>
+                    <p>The chat widget appears on your storefront. Jerry The Customer Service Bot starts handling customer queries instantly. Monitor performance from your dashboard.</p>
+                </div>
+                <div class="tl-step">
+                    <div class="tl-dot">4</div>
+                    <h3>Earn</h3>
+                    <p>Watch Jerry The Customer Service Bot resolve support tickets, recommend products, and drive measurable revenue — visible in your attribution dashboard.</p>
                 </div>
             </div>
         </div>
@@ -705,41 +789,43 @@
     <!-- SECURITY -->
     <section class="security" id="security">
         <div class="container">
-            <div class="security-badge">&#128737; Protected by WonderwallAi</div>
-            <h2>Enterprise-grade <span class="gradient-text">AI security</span></h2>
-            <p class="section-desc">Jerry is protected by WonderwallAi &mdash; an open-source AI firewall that blocks prompt injection, data leaks, and abuse in real time.</p>
-            <div class="security-features fade-in">
+            <div class="section-label">Enterprise Security</div>
+            <h2>Jerry The Customer Service Bot is <span class="gradient-text">protected</span></h2>
+            <p class="section-desc">
+                Every conversation is protected by WonderwallAi — an open-source AI firewall with 4 layers of defence. Jerry The Customer Service Bot can't be jailbroken, tricked into leaking data, or abused as a free coding assistant.
+            </p>
+            <div class="security-grid fade-in">
                 <div class="security-item">
-                    <div class="security-check">&#10003;</div>
+                    <div class="security-icon">&#128737;</div>
                     <div>
-                        <strong>Prompt Injection Defense</strong>
-                        <span>4-layer pipeline blocks jailbreak attempts in &lt;2ms</span>
+                        <strong>Prompt Injection Defence</strong>
+                        <span>4-layer WonderwallAi pipeline blocks jailbreak attempts in under 2ms. Semantic routing, LLM sentinel, and canary tokens working together.</span>
                     </div>
                 </div>
                 <div class="security-item">
-                    <div class="security-check">&#10003;</div>
+                    <div class="security-icon">&#128274;</div>
                     <div>
                         <strong>Data Leak Prevention</strong>
-                        <span>API keys, PII, and sensitive data are caught and redacted</span>
+                        <span>API keys, PII, credentials, and sensitive data are caught and redacted before they ever leave Jerry The Customer Service Bot's response pipeline.</span>
                     </div>
                 </div>
                 <div class="security-item">
-                    <div class="security-check">&#10003;</div>
+                    <div class="security-icon">&#127919;</div>
                     <div>
                         <strong>Topic Enforcement</strong>
-                        <span>Jerry stays on-topic &mdash; no free coding assistant abuse</span>
+                        <span>Jerry The Customer Service Bot stays on-topic. E-commerce topics only — no one can abuse it as a general-purpose AI or extract system prompts.</span>
                     </div>
                 </div>
                 <div class="security-item">
-                    <div class="security-check">&#10003;</div>
+                    <div class="security-icon">&#128272;</div>
                     <div>
-                        <strong>Canary Tokens</strong>
-                        <span>Detects system prompt extraction with zero false positives</span>
+                        <strong>JWT Authentication</strong>
+                        <span>Every WebSocket connection is authenticated with a signed JWT. Rate limiting, IP limits, and input sanitisation protect against abuse.</span>
                     </div>
                 </div>
             </div>
             <p style="margin-top: 24px; font-size: 0.85rem; color: var(--text-muted);">
-                Learn more at <a href="https://github.com/Buddafest/wonderwallai" style="color: var(--terracotta);">github.com/Buddafest/wonderwallai</a>
+                Powered by <a href="https://github.com/Buddafest/wonderwallai" style="color: var(--terracotta);">WonderwallAi</a> — open-source AI firewall with 59 passing tests.
             </p>
         </div>
     </section>
@@ -749,7 +835,7 @@
         <div class="container" style="text-align: center;">
             <div class="section-label">Pricing</div>
             <h2>Simple, transparent <span class="gradient-text">pricing</span></h2>
-            <p class="section-desc" style="margin: 0 auto;">No hidden fees. No per-message charges. Just a flat monthly rate with performance-based billing.</p>
+            <p class="section-desc" style="margin: 0 auto;">No hidden fees. No per-message charges. Jerry The Customer Service Bot charges a flat monthly rate plus performance-based billing — you only pay more when Jerry earns you more.</p>
             <div class="pricing-grid fade-in">
                 <div class="price-card">
                     <div class="price-name">Base</div>
@@ -760,9 +846,11 @@
                         <li><span class="check">&#10003;</span> Unlimited conversations</li>
                         <li><span class="check">&#10003;</span> Full product catalog sync</li>
                         <li><span class="check">&#10003;</span> Order tracking &amp; returns</li>
-                        <li><span class="check">&#10003;</span> Voice chat</li>
+                        <li><span class="check">&#10003;</span> Voice chat &amp; 50+ languages</li>
+                        <li><span class="check">&#10003;</span> AI security (WonderwallAi)</li>
+                        <li><span class="check">&#10003;</span> Revenue attribution dashboard</li>
                         <li><span class="check">&#10003;</span> $0.50/resolution</li>
-                        <li><span class="check">&#10003;</span> 2% revenue share on attributed sales</li>
+                        <li><span class="check">&#10003;</span> 1% revenue share on attributed sales</li>
                     </ul>
                     <a class="btn-price btn-price-secondary" href="#cta">Choose Base</a>
                 </div>
@@ -773,38 +861,15 @@
                     <div class="price-period">+ performance billing</div>
                     <ul class="price-features">
                         <li><span class="check">&#10003;</span> Everything in Base</li>
-                        <li><span class="check">&#10003;</span> Priority support</li>
+                        <li><span class="check">&#10003;</span> Priority support &amp; onboarding</li>
                         <li><span class="check">&#10003;</span> Custom brand voice training</li>
                         <li><span class="check">&#10003;</span> Advanced analytics dashboard</li>
+                        <li><span class="check">&#10003;</span> Dedicated account manager</li>
+                        <li><span class="check">&#10003;</span> Custom escalation workflows</li>
                         <li><span class="check">&#10003;</span> $1.00/resolution</li>
-                        <li><span class="check">&#10003;</span> 5% revenue share on attributed sales</li>
+                        <li><span class="check">&#10003;</span> 1% revenue share on attributed sales</li>
                     </ul>
                     <a class="btn-price btn-price-primary" href="#cta">Choose Elite</a>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- TESTIMONIALS / SOCIAL PROOF -->
-    <section style="background: var(--bg-subtle); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
-        <div class="container" style="text-align: center;">
-            <div class="section-label">Trusted By</div>
-            <h2>What store owners are <span class="gradient-text">saying</span></h2>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-top: 48px;">
-                <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 32px; text-align: center;">
-                    <div style="font-size: 2rem; margin-bottom: 12px; opacity: 0.3;">&#128172;</div>
-                    <p style="font-size: 0.95rem; color: var(--text-muted); font-style: italic; margin-bottom: 16px;">"Your name could be here."</p>
-                    <a href="mailto:louis@buddafest.com?subject=Jerry%20%E2%80%94%20Early%20Adopter" style="color: var(--primary); font-size: 0.85rem; font-weight: 600;">Enquire to be featured &rarr;</a>
-                </div>
-                <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 32px; text-align: center;">
-                    <div style="font-size: 2rem; margin-bottom: 12px; opacity: 0.3;">&#128172;</div>
-                    <p style="font-size: 0.95rem; color: var(--text-muted); font-style: italic; margin-bottom: 16px;">"Your name could be here."</p>
-                    <a href="mailto:louis@buddafest.com?subject=Jerry%20%E2%80%94%20Early%20Adopter" style="color: var(--primary); font-size: 0.85rem; font-weight: 600;">Enquire to be featured &rarr;</a>
-                </div>
-                <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 32px; text-align: center;">
-                    <div style="font-size: 2rem; margin-bottom: 12px; opacity: 0.3;">&#128172;</div>
-                    <p style="font-size: 0.95rem; color: var(--text-muted); font-style: italic; margin-bottom: 16px;">"Your name could be here."</p>
-                    <a href="mailto:louis@buddafest.com?subject=Jerry%20%E2%80%94%20Early%20Adopter" style="color: var(--primary); font-size: 0.85rem; font-weight: 600;">Enquire to be featured &rarr;</a>
                 </div>
             </div>
         </div>
@@ -814,13 +879,13 @@
     <section class="cta-section" id="cta">
         <div class="container fade-in">
             <div class="section-label">Ready?</div>
-            <h2>Give your customers the <span class="gradient-text">service they deserve</span></h2>
+            <h2>Put Jerry The Customer Service Bot <span class="gradient-text">to work</span></h2>
             <p class="section-desc" style="margin: 0 auto 40px; text-align: center;">
-                Jerry handles the support. You focus on growing your business.
+                Jerry The Customer Service Bot handles the support. You focus on growing your business.
             </p>
-            <div class="hero-buttons">
-                <a class="btn-primary" href="mailto:louis@buddafest.com?subject=Jerry%20%E2%80%94%20Free%20Trial">Try Jerry Free &rarr;</a>
-                <a class="btn-secondary" href="https://github.com/Buddafest">View on GitHub</a>
+            <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
+                <a class="btn-primary" href="mailto:louis@buddafest.com?subject=Jerry%20The%20Customer%20Service%20Bot%20%E2%80%94%20Free%20Trial">Start Free Trial &rarr;</a>
+                <a class="btn-secondary" href="https://github.com/Buddafest/sunsetbot">View on GitHub</a>
             </div>
         </div>
     </section>
@@ -830,14 +895,16 @@
         <div class="container">
             <div class="footer-content">
                 <div>
-                    <div class="logo" style="margin-bottom: 8px;"><span class="logo-jerry">Jerry</span> <span class="logo-subtitle">The Customer Service Bot</span></div>
-                    <div class="footer-copy">&copy; 2026 Jerry The Customer Service Bot. All rights reserved.</div>
+                    <div class="logo" style="margin-bottom: 8px;">
+                        <span class="logo-jerry">Jerry</span> <span class="logo-sub">The Customer Service Bot</span>
+                    </div>
+                    <div class="footer-copy">&copy; 2026 Jerry The Customer Service Bot &middot; A Skint Labs Product</div>
                 </div>
                 <div class="footer-links">
+                    <a href="#capabilities">Capabilities</a>
                     <a href="#features">Features</a>
                     <a href="#pricing">Pricing</a>
-                    <a href="#security">Security</a>
-                    <a href="https://github.com/Buddafest">GitHub</a>
+                    <a href="https://github.com/Buddafest/sunsetbot">GitHub</a>
                 </div>
                 <div class="footer-shield">
                     &#128737; Protected by <a href="https://github.com/Buddafest/wonderwallai" style="color: var(--terracotta);">WonderwallAi</a>
@@ -846,13 +913,10 @@
         </div>
     </footer>
 
-    <!-- Scroll animation -->
     <script>
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                }
+                if (entry.isIntersecting) entry.target.classList.add('visible');
             });
         }, { threshold: 0.1 });
         document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
