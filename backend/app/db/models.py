@@ -228,3 +228,25 @@ class AttributedSale(Base):
         comment="Pre-calculated commission in AUD cents for Stripe metered billing",
     )
     created_at: Mapped[datetime] = mapped_column(DateTime, default=func.now(), nullable=False)
+
+# ---------------------------------------------------------------------------
+# ChatInteraction — Stores every individual message for full analytics and debugging
+# ---------------------------------------------------------------------------
+
+class ChatInteraction(Base):
+    """Stores every individual message for full analytics and debugging."""
+    __tablename__ = "chat_interactions"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    session_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("chat_sessions.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    message: Mapped[str] = mapped_column(Text, nullable=False)
+    response_text: Mapped[str] = mapped_column(Text, nullable=True)
+    intent: Mapped[str] = mapped_column(String(50), nullable=True)
+    entities: Mapped[dict] = mapped_column(JSON, nullable=True)
+    products_shown: Mapped[int] = mapped_column(Integer, default=0)
+    escalated: Mapped[bool] = mapped_column(Boolean, default=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=func.now())
+
+
