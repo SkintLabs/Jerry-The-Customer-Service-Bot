@@ -296,33 +296,35 @@ class ConversationEngine:
     async def process_message(self, message: str, context: ConversationContext) -> EngineResponse:
         
         # --- STEP 0: THE WONDERWALL AI FIREWALL ---
-        try:
-            firewall_url = os.getenv("WONDERWALL_API_URL", "https://your-wonderwall.railway.app/v1/scan")
-            headers = {"Authorization": f"Bearer {os.getenv('WONDERWALL_API_KEY')}"}
-            
-            # Synchronous request used here; consider httpx for full async
-            scan_response = requests.post(firewall_url, headers=headers, json={"text": message}, timeout=2.0)
-            
-            if scan_response.status_code == 200:
-                scan_result = scan_response.json()
-                if scan_result.get("action") == "block":
-                    logger.warning(f"WonderwallAi BLOCKED threat in session {context.session_id}")
-                    return EngineResponse(
-                        text="Security Alert: This request has been flagged and blocked by WonderwallAi. How can I help you with a standard shopping query?",
-                        intent="security_block",
-                        entities={},
-                        session_id=context.session_id
-                    )
-            elif scan_response.status_code == 402:
-                logger.info(f"Billing Block for store {context.store_id}")
-                return EngineResponse(
-                    text="The AI service for this store is currently inactive. Please contact the administrator.",
-                    intent="billing_block",
-                    entities={},
-                    session_id=context.session_id
-                )
-        except Exception as e:
-            logger.error(f"WonderwallAi Shield communication error: {e}")
+if firewall_engine is not None:
+    try:
+        # Inbound scan
+        verdict = await firewall_engine.scan_inbound(user_message)
+        if not verdict.allowed:
+            await websocket.send_json({
+                "type": "message",
+                "text": verdict.message,
+                "intent": "firewall_block",
+                "products": [],
+                "escalated": False,
+                "session_id": session_id,
+            })
+            # Still track the blocked attempt for analytics
+            await conversation_engine.analytics.track_conversation(
+                store_id, session_id, user_message, "", "firewall_block", {}, 0, False
+            )
+            continue
+    except Exception as e:
+        logger.error(f"Firewall inbound error (allowing): {e}")
+
+# ... (rest of your processing)
+
+# After LLM response
+if firewall_engine is not None:
+    egress_verdict = await firewall_engine.scan_outbound(
+        engine_response.text, context.canary_token or ""
+    )
+    engine_response.text = egress_verdict.message
 
         # --- STEP 1: VALIDATION ---
         if len(message) > MAX_MESSAGE_LENGTH:
