@@ -281,6 +281,26 @@ class ResponseGenerator:
             return "I'm having a slight technical glitch. One of our humans will be with you shortly!"
 
 # ============================================================================
+# FALLBACK STUBS (replaced at runtime by real services in main.py)
+# ============================================================================
+
+class _MockProductIntelligence:
+    """No-op product search until real Pinecone service is wired in."""
+    async def search(self, query: str, store_id: str, entities: dict) -> list:
+        return []
+
+class _InMemoryContextManager:
+    """Simple dict-based context store for development/fallback."""
+    def __init__(self):
+        self._contexts: dict[str, Any] = {}
+
+    def get(self, session_id: str):
+        return self._contexts.get(session_id)
+
+    def set(self, session_id: str, context):
+        self._contexts[session_id] = context
+
+# ============================================================================
 # CONVERSATION ENGINE — THE MAIN ORCHESTRATOR
 # ============================================================================
 
