@@ -4,9 +4,9 @@
 
 # Environment & secrets
 .env
-.env.*
 .env.local
 .env.production
+!.env.example
 
 # Python
 backend/venv/

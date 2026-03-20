@@ -313,6 +313,17 @@ class ConversationEngine:
         self._product_intelligence = _MockProductIntelligence()
         self._context_manager = _InMemoryContextManager()
 
+    async def get_or_create_context(self, session_id: str, store_id: str) -> ConversationContext:
+        existing = self._context_manager.get(session_id)
+        if existing:
+            return existing
+        context = ConversationContext(session_id=session_id, store_id=store_id)
+        self._context_manager.set(session_id, context)
+        return context
+
+    async def end_session(self, session_id: str) -> None:
+        self._context_manager._contexts.pop(session_id, None)
+
     async def process_message(self, message: str, context: ConversationContext) -> EngineResponse:
 
         # ── STEP 0: WONDERWALL AI FIREWALL (inbound scan) ──
