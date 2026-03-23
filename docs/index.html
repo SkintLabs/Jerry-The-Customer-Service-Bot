@@ -373,8 +373,8 @@
 
         /* ── PRICING ── */
         .pricing-grid {
-            display: grid; grid-template-columns: repeat(2, 1fr);
-            gap: 24px; margin-top: 48px; max-width: 780px;
+            display: grid; grid-template-columns: repeat(3, 1fr);
+            gap: 24px; margin-top: 48px; max-width: 1000px;
             margin-left: auto; margin-right: auto;
         }
         .price-card {
@@ -456,6 +456,7 @@
             .cap-example { font-size: 0.75rem; word-break: break-word; }
             .features-columns { grid-template-columns: 1fr; }
             .security-grid { grid-template-columns: 1fr; }
+            .pricing-grid { grid-template-columns: 1fr; max-width: 400px; }
             .timeline { flex-direction: column; gap: 32px; }
             .timeline::before { display: none; }
             section { padding: 64px 0; }
@@ -892,41 +893,48 @@
         <div class="container" style="text-align: center;">
             <div class="section-label">Pricing</div>
             <h2>Simple, transparent <span class="gradient-text">pricing</span></h2>
-            <p class="section-desc" style="margin: 0 auto;">No hidden fees. No per-message charges. Jerry The Customer Service Bot charges a flat monthly rate plus performance-based billing — you only pay more when Jerry earns you more.</p>
+            <p class="section-desc" style="margin: 0 auto;">Flat monthly rate. $0.25 per AI resolution. No hidden fees. No revenue share. Jerry costs less than a single support ticket at most competitors.</p>
             <div class="pricing-grid fade-in">
                 <div class="price-card">
-                    <div class="price-name">Base</div>
+                    <div class="price-name">Starter</div>
                     <div class="price-desc">For growing Shopify stores</div>
-                    <div class="price-amount">$299 <span>USD/mo</span></div>
-                    <div class="price-period">+ performance billing</div>
+                    <div class="price-amount">$49 <span>USD/mo</span></div>
+                    <div class="price-period">+ $0.25/resolution</div>
                     <ul class="price-features">
-                        <li><span class="check">&#10003;</span> Unlimited conversations</li>
+                        <li><span class="check">&#10003;</span> 500 conversations/month</li>
                         <li><span class="check">&#10003;</span> Full product catalog sync</li>
                         <li><span class="check">&#10003;</span> Order tracking &amp; returns</li>
                         <li><span class="check">&#10003;</span> Voice chat &amp; 50+ languages</li>
                         <li><span class="check">&#10003;</span> AI security (WonderwallAi)</li>
-                        <li><span class="check">&#10003;</span> Revenue attribution dashboard</li>
-                        <li><span class="check">&#10003;</span> $0.50/resolution</li>
-                        <li><span class="check">&#10003;</span> 1% revenue share on attributed sales</li>
                     </ul>
-                    <a class="btn-price btn-price-secondary" href="https://sunsetbot-production.up.railway.app/billing/checkout?plan=base">Choose Base</a>
+                    <a class="btn-price btn-price-secondary" href="https://sunsetbot-production.up.railway.app/billing/checkout?plan=starter">Get Started</a>
                 </div>
                 <div class="price-card featured">
-                    <div class="price-name">Elite</div>
-                    <div class="price-desc">For high-volume stores</div>
-                    <div class="price-amount">$1,499 <span>USD/mo</span></div>
-                    <div class="price-period">+ performance billing</div>
+                    <div class="price-name">Growth</div>
+                    <div class="price-desc">For scaling stores</div>
+                    <div class="price-amount">$149 <span>USD/mo</span></div>
+                    <div class="price-period">+ $0.25/resolution</div>
                     <ul class="price-features">
-                        <li><span class="check">&#10003;</span> Everything in Base</li>
-                        <li><span class="check">&#10003;</span> Priority support &amp; onboarding</li>
+                        <li><span class="check">&#10003;</span> Unlimited conversations</li>
+                        <li><span class="check">&#10003;</span> Everything in Starter</li>
+                        <li><span class="check">&#10003;</span> Revenue attribution dashboard</li>
+                        <li><span class="check">&#10003;</span> Priority support</li>
                         <li><span class="check">&#10003;</span> Custom brand voice training</li>
-                        <li><span class="check">&#10003;</span> Advanced analytics dashboard</li>
+                    </ul>
+                    <a class="btn-price btn-price-primary" href="https://sunsetbot-production.up.railway.app/billing/checkout?plan=growth">Get Started</a>
+                </div>
+                <div class="price-card">
+                    <div class="price-name">Scale</div>
+                    <div class="price-desc">For high-volume stores</div>
+                    <div class="price-amount">$499 <span>USD/mo</span></div>
+                    <div class="price-period">+ $0.25/resolution</div>
+                    <ul class="price-features">
+                        <li><span class="check">&#10003;</span> Everything in Growth</li>
                         <li><span class="check">&#10003;</span> Dedicated account manager</li>
                         <li><span class="check">&#10003;</span> Custom escalation workflows</li>
-                        <li><span class="check">&#10003;</span> $1.00/resolution</li>
-                        <li><span class="check">&#10003;</span> 1% revenue share on attributed sales</li>
+                        <li><span class="check">&#10003;</span> Advanced analytics dashboard</li>
                     </ul>
-                    <a class="btn-price btn-price-primary" href="https://sunsetbot-production.up.railway.app/billing/checkout?plan=elite">Choose Elite</a>
+                    <a class="btn-price btn-price-secondary" href="https://sunsetbot-production.up.railway.app/billing/checkout?plan=scale">Get Started</a>
                 </div>
             </div>
         </div>
