@@ -4,6 +4,7 @@ Handles Stripe subscription management and webhook processing.
 """
 
 import logging
+import os
 
 from fastapi import APIRouter, HTTPException, Request, Response
 from fastapi.responses import RedirectResponse
@@ -88,7 +89,6 @@ async def checkout(plan: str = "base"):
         raise HTTPException(status_code=503, detail="Stripe not available")
 
     from app.services.billing_service import get_plan_config
-    import os
 
     api_key = os.getenv("STRIPE_SECRET_KEY", "")
     if not api_key:
@@ -116,14 +116,20 @@ async def checkout(plan: str = "base"):
     else:
         logger.info(f"Metered price not configured for plan '{plan}' — checkout will use flat fee only")
 
+    coupon_id = os.getenv("JERRY_EARLY_50_OFF", "")
+    session_params = dict(
+        mode="subscription",
+        line_items=line_items,
+        success_url="https://jerry.skintlabs.ai/?checkout=success",
+        cancel_url="https://jerry.skintlabs.ai/#pricing",
+        allow_promotion_codes=True,
+    )
+    if coupon_id:
+        session_params["discounts"] = [{"coupon": coupon_id}]
+        session_params.pop("allow_promotion_codes")  # cannot combine with discounts
+
     try:
-        session = stripe_mod.checkout.Session.create(
-            mode="subscription",
-            line_items=line_items,
-            success_url="https://jerry.skintlabs.ai/?checkout=success",
-            cancel_url="https://jerry.skintlabs.ai/#pricing",
-            allow_promotion_codes=True,
-        )
+        session = stripe_mod.checkout.Session.create(**session_params)
         return RedirectResponse(session.url, status_code=303)
     except Exception as e:
         logger.error(f"Failed to create checkout session: {e}")
