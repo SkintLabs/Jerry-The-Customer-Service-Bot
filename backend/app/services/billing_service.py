@@ -7,7 +7,7 @@ Currency: USD. Uses Stripe Python SDK (sync calls wrapped in run_in_executor).
 import asyncio
 import logging
 import os
-from decimal import Decimal
+
 from typing import Optional
 
 logger = logging.getLogger("jerry.billing")
@@ -22,19 +22,35 @@ except ImportError:
 
 
 PLAN_CONFIG = {
+    # ── Internal plan names (legacy / API use) ─────────────────────────────
     "base": {
         "flat_price_id": os.getenv("STRIPE_BASE_FLAT_PRICE_ID", "price_placeholder_base_flat"),
         "resolution_price_id": os.getenv("STRIPE_BASE_RESOLUTION_PRICE_ID", "price_placeholder_base_res"),
-        "revenue_share_price_id": os.getenv("STRIPE_BASE_REVENUE_SHARE_PRICE_ID", "price_placeholder_base_rev"),
-        "per_resolution_usd": 50,           # $0.50
-        "revenue_share_pct": Decimal("0.01"),  # 1%
+        "per_resolution_usd": 25,           # $0.25
     },
     "elite": {
         "flat_price_id": os.getenv("STRIPE_ELITE_FLAT_PRICE_ID", "price_placeholder_elite_flat"),
         "resolution_price_id": os.getenv("STRIPE_ELITE_RESOLUTION_PRICE_ID", "price_placeholder_elite_res"),
-        "revenue_share_price_id": os.getenv("STRIPE_ELITE_REVENUE_SHARE_PRICE_ID", "price_placeholder_elite_rev"),
-        "per_resolution_usd": 100,          # $1.00
-        "revenue_share_pct": Decimal("0.01"),  # 1%
+        "per_resolution_usd": 25,           # $0.25
+    },
+    # ── Landing page plan names ────────────────────────────────────────────
+    # Starter: $49/mo USD flat + $0.25/resolution
+    "starter": {
+        "flat_price_id": os.getenv("STRIPE_STARTER_FLAT_PRICE_ID", "price_placeholder_starter_flat"),
+        "resolution_price_id": os.getenv("STRIPE_STARTER_RESOLUTION_PRICE_ID", "price_placeholder_starter_res"),
+        "per_resolution_usd": 25,           # $0.25
+    },
+    # Growth: $149/mo USD flat + $0.25/resolution
+    "growth": {
+        "flat_price_id": os.getenv("STRIPE_GROWTH_FLAT_PRICE_ID", "price_placeholder_growth_flat"),
+        "resolution_price_id": os.getenv("STRIPE_GROWTH_RESOLUTION_PRICE_ID", "price_placeholder_growth_res"),
+        "per_resolution_usd": 25,           # $0.25
+    },
+    # Scale: $499/mo USD flat + $0.25/resolution
+    "scale": {
+        "flat_price_id": os.getenv("STRIPE_SCALE_FLAT_PRICE_ID", "price_placeholder_scale_flat"),
+        "resolution_price_id": os.getenv("STRIPE_SCALE_RESOLUTION_PRICE_ID", "price_placeholder_scale_res"),
+        "per_resolution_usd": 25,           # $0.25
     },
 }
 
@@ -100,7 +116,6 @@ class BillingService:
                     items=[
                         {"price": config["flat_price_id"]},
                         {"price": config["resolution_price_id"]},
-                        {"price": config["revenue_share_price_id"]},
                     ],
                     currency="usd",
                     payment_behavior="default_incomplete",
@@ -158,50 +173,9 @@ class BillingService:
             return False
 
     async def report_revenue_share(self, subscription_id: str, plan: str, order_value_cents: int) -> bool:
-        """Calculate commission in USD cents and push to Stripe metered billing."""
-        if not self.configured or not subscription_id:
-            return False
-
-        config = PLAN_CONFIG.get(plan, PLAN_CONFIG["base"])
-        commission_cents = int(order_value_cents * config["revenue_share_pct"])
-
-        if commission_cents <= 0:
-            return True  # No commission to report
-
-        loop = asyncio.get_running_loop()
-
-        try:
-            sub = await loop.run_in_executor(
-                None,
-                lambda: stripe.Subscription.retrieve(subscription_id),
-            )
-            rev_item = None
-            for item in sub["items"]["data"]:
-                if item["price"]["id"] == config["revenue_share_price_id"]:
-                    rev_item = item
-                    break
-
-            if not rev_item:
-                logger.warning(f"Revenue share price item not found in subscription {subscription_id}")
-                return False
-
-            await loop.run_in_executor(
-                None,
-                lambda: stripe.SubscriptionItem.create_usage_record(
-                    rev_item["id"],
-                    quantity=commission_cents,
-                    action="increment",
-                ),
-            )
-            logger.info(
-                f"Reported revenue share: {commission_cents} cents "
-                f"({float(config['revenue_share_pct'])*100}% of {order_value_cents}c) "
-                f"for sub={subscription_id}"
-            )
-            return True
-        except Exception as e:
-            logger.error(f"Failed to report revenue share: {e}")
-            return False
+        """Revenue share billing has been removed. This is a no-op for backward compatibility."""
+        logger.debug("report_revenue_share called but revenue share billing is disabled")
+        return True
 
     async def handle_webhook_event(self, payload: bytes, sig_header: str) -> Optional[dict]:
         """

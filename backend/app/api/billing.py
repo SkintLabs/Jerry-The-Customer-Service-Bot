@@ -98,7 +98,8 @@ async def checkout(plan: str = "base"):
 
     config = PLAN_CONFIG.get(plan)
     if not config:
-        raise HTTPException(status_code=400, detail="Invalid plan. Use 'base' or 'elite'.")
+        valid_plans = ", ".join(PLAN_CONFIG.keys())
+        raise HTTPException(status_code=400, detail=f"Invalid plan '{plan}'. Valid plans: {valid_plans}.")
 
     try:
         session = stripe_mod.checkout.Session.create(
@@ -106,10 +107,9 @@ async def checkout(plan: str = "base"):
             line_items=[
                 {"price": config["flat_price_id"], "quantity": 1},
                 {"price": config["resolution_price_id"]},
-                {"price": config["revenue_share_price_id"]},
             ],
-            success_url="https://buddafest.github.io/sunsetbot/?checkout=success",
-            cancel_url="https://buddafest.github.io/sunsetbot/#pricing",
+            success_url="https://jerry.skintlabs.ai/?checkout=success",
+            cancel_url="https://jerry.skintlabs.ai/#pricing",
             allow_promotion_codes=True,
         )
         return RedirectResponse(session.url, status_code=303)
