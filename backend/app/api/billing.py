@@ -20,7 +20,7 @@ router = APIRouter(prefix="/billing", tags=["Billing"])
 
 class CreateSubscriptionRequest(BaseModel):
     shop_domain: str
-    plan: str = "base"  # "base" or "elite"
+    plan: str = "base"  # "base", "growth", or "elite"
 
 
 @router.post("/create-subscription")
@@ -87,7 +87,7 @@ async def checkout(plan: str = "base"):
     except ImportError:
         raise HTTPException(status_code=503, detail="Stripe not available")
 
-    from app.services.billing_service import PLAN_CONFIG
+    from app.services.billing_service import get_plan_config
     import os
 
     api_key = os.getenv("STRIPE_SECRET_KEY", "")
@@ -96,9 +96,10 @@ async def checkout(plan: str = "base"):
 
     stripe_mod.api_key = api_key
 
-    config = PLAN_CONFIG.get(plan)
+    plan_config = get_plan_config()
+    config = plan_config.get(plan)
     if not config:
-        valid_plans = ", ".join(PLAN_CONFIG.keys())
+        valid_plans = ", ".join(plan_config.keys())
         raise HTTPException(status_code=400, detail=f"Invalid plan '{plan}'. Valid plans: {valid_plans}.")
 
     try:
@@ -106,7 +107,7 @@ async def checkout(plan: str = "base"):
             mode="subscription",
             line_items=[
                 {"price": config["flat_price_id"], "quantity": 1},
-                {"price": config["resolution_price_id"]},
+                {"price": config["metered_price_id"]},
             ],
             success_url="https://jerry.skintlabs.ai/?checkout=success",
             cancel_url="https://jerry.skintlabs.ai/#pricing",

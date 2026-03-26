@@ -21,38 +21,32 @@ except ImportError:
     logger.warning("stripe package not installed — billing disabled")
 
 
-PLAN_CONFIG = {
-    # ── Internal plan names (legacy / API use) ─────────────────────────────
-    "base": {
-        "flat_price_id": os.getenv("STRIPE_BASE_FLAT_PRICE_ID", "price_placeholder_base_flat"),
-        "resolution_price_id": os.getenv("STRIPE_BASE_RESOLUTION_PRICE_ID", "price_placeholder_base_res"),
-        "per_resolution_usd": 25,           # $0.25
-    },
-    "elite": {
-        "flat_price_id": os.getenv("STRIPE_ELITE_FLAT_PRICE_ID", "price_placeholder_elite_flat"),
-        "resolution_price_id": os.getenv("STRIPE_ELITE_RESOLUTION_PRICE_ID", "price_placeholder_elite_res"),
-        "per_resolution_usd": 25,           # $0.25
-    },
-    # ── Landing page plan names ────────────────────────────────────────────
-    # Starter: $49/mo USD flat + $0.25/resolution
-    "starter": {
-        "flat_price_id": os.getenv("STRIPE_STARTER_FLAT_PRICE_ID", "price_placeholder_starter_flat"),
-        "resolution_price_id": os.getenv("STRIPE_STARTER_RESOLUTION_PRICE_ID", "price_placeholder_starter_res"),
-        "per_resolution_usd": 25,           # $0.25
-    },
-    # Growth: $149/mo USD flat + $0.25/resolution
-    "growth": {
-        "flat_price_id": os.getenv("STRIPE_GROWTH_FLAT_PRICE_ID", "price_placeholder_growth_flat"),
-        "resolution_price_id": os.getenv("STRIPE_GROWTH_RESOLUTION_PRICE_ID", "price_placeholder_growth_res"),
-        "per_resolution_usd": 25,           # $0.25
-    },
-    # Scale: $499/mo USD flat + $0.25/resolution
-    "scale": {
-        "flat_price_id": os.getenv("STRIPE_SCALE_FLAT_PRICE_ID", "price_placeholder_scale_flat"),
-        "resolution_price_id": os.getenv("STRIPE_SCALE_RESOLUTION_PRICE_ID", "price_placeholder_scale_res"),
-        "per_resolution_usd": 25,           # $0.25
-    },
-}
+def get_plan_config() -> dict:
+    """Build plan config at runtime so Railway env vars are read correctly."""
+    return {
+        # Base: $49/mo USD flat + $0.25/resolution
+        "base": {
+            "flat_price_id": os.getenv("STRIPE_BASE_FLAT_PRICE_ID", "price_placeholder_base_flat"),
+            "metered_price_id": os.getenv("STRIPE_BASE_METERED_PRICE_ID", "price_placeholder_base_metered"),
+            "per_resolution_usd": 25,           # $0.25
+        },
+        # Growth: $149/mo USD flat + $0.25/resolution
+        "growth": {
+            "flat_price_id": os.getenv("STRIPE_GROWTH_FLAT_PRICE_ID", "price_placeholder_growth_flat"),
+            "metered_price_id": os.getenv("STRIPE_GROWTH_METERED_PRICE_ID", "price_placeholder_growth_metered"),
+            "per_resolution_usd": 25,           # $0.25
+        },
+        # Elite: $499/mo USD flat + $0.25/resolution
+        "elite": {
+            "flat_price_id": os.getenv("STRIPE_ELITE_FLAT_PRICE_ID", "price_placeholder_elite_flat"),
+            "metered_price_id": os.getenv("STRIPE_ELITE_METERED_PRICE_ID", "price_placeholder_elite_metered"),
+            "per_resolution_usd": 25,           # $0.25
+        },
+    }
+
+
+# Keep backward-compatible module-level reference
+PLAN_CONFIG = get_plan_config()
 
 
 class BillingService:
@@ -102,7 +96,7 @@ class BillingService:
         if not self.configured:
             return None
 
-        config = PLAN_CONFIG.get(plan)
+        config = get_plan_config().get(plan)
         if not config:
             logger.error(f"Unknown plan: {plan}")
             return None
@@ -115,7 +109,7 @@ class BillingService:
                     customer=customer_id,
                     items=[
                         {"price": config["flat_price_id"]},
-                        {"price": config["resolution_price_id"]},
+                        {"price": config["metered_price_id"]},
                     ],
                     currency="usd",
                     payment_behavior="default_incomplete",
@@ -139,7 +133,8 @@ class BillingService:
         if not self.configured or not subscription_id:
             return False
 
-        config = PLAN_CONFIG.get(plan, PLAN_CONFIG["base"])
+        plans = get_plan_config()
+        config = plans.get(plan, plans["base"])
         loop = asyncio.get_running_loop()
 
         try:
@@ -150,7 +145,7 @@ class BillingService:
             )
             res_item = None
             for item in sub["items"]["data"]:
-                if item["price"]["id"] == config["resolution_price_id"]:
+                if item["price"]["id"] == config["metered_price_id"]:
                     res_item = item
                     break
 

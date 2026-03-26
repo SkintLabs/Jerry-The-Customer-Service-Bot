@@ -108,8 +108,8 @@ class AnalyticsService:
                 if existing.scalar_one_or_none():
                     return
 
-                plan_config = {"base": Decimal("0.02"), "elite": Decimal("0.05")}
-                pct = plan_config.get(store.jerry_plan, Decimal("0.02"))
+                plan_config = {"base": Decimal("0"), "growth": Decimal("0"), "elite": Decimal("0")}
+                pct = plan_config.get(store.jerry_plan, Decimal("0"))
                 order_cents = int(order_value * 100)
                 commission = int(order_cents * pct)
 
