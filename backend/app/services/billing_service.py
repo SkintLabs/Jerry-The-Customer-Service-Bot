@@ -24,14 +24,12 @@ except ImportError:
 def get_plan_config() -> dict:
     """Build plan config at runtime so Railway env vars are read correctly.
 
-    Railway env vars use: STRIPE_BASE_, STRIPE_GROWTH_, STRIPE_ELITE_
-    Landing page sends: starter, growth, scale
-    Aliases: starter → base, scale → elite
+    Railway env vars use: STRIPE_STARTER_, STRIPE_GROWTH_, STRIPE_SCALE_
     metered_price_id is optional — checkout works with flat fee only.
     """
     base = {
-        "flat_price_id": os.getenv("STRIPE_BASE_FLAT_PRICE_ID", ""),
-        "metered_price_id": os.getenv("STRIPE_BASE_METERED_PRICE_ID", ""),
+        "flat_price_id": os.getenv("STRIPE_STARTER_FLAT_PRICE_ID", ""),
+        "metered_price_id": os.getenv("STRIPE_STARTER_METERED_PRICE_ID", ""),
         "per_resolution_usd": 25,  # $0.25
     }
     growth = {
@@ -40,16 +38,15 @@ def get_plan_config() -> dict:
         "per_resolution_usd": 25,
     }
     elite = {
-        "flat_price_id": os.getenv("STRIPE_ELITE_FLAT_PRICE_ID", ""),
-        "metered_price_id": os.getenv("STRIPE_ELITE_METERED_PRICE_ID", ""),
+        "flat_price_id": os.getenv("STRIPE_SCALE_FLAT_PRICE_ID", ""),
+        "metered_price_id": os.getenv("STRIPE_SCALE_METERED_PRICE_ID", ""),
         "per_resolution_usd": 25,
     }
     return {
         "base": base,
+        "starter": base,
         "growth": growth,
         "elite": elite,
-        # Landing page aliases
-        "starter": base,
         "scale": elite,
     }
 
